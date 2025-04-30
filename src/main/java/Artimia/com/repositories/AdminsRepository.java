@@ -8,6 +8,10 @@ import Artimia.com.entities.Admins;
 
 public interface AdminsRepository extends JpaRepository<Admins, String> 
 {
-    Optional<Admins> findByUsername(String username);
+    Optional<Admins> findByEmail(String email);
+    Optional<Admins> findByPhoneNumber(String phoneNumber);
+    boolean existsByUsername(String username);
+    boolean existsByEmail(String email);
+    boolean existsByPhoneNumber(String phoneNumber);
 }
 

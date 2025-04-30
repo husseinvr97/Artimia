@@ -6,7 +6,6 @@ public record UserGet
 (
     String firstName,
     String lastName,
-    String username,
     String phoneNumber,
     String email,
     LocalDateTime dateCreated

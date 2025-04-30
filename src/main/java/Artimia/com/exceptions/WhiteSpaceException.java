@@ -1,6 +1,6 @@
 package Artimia.com.exceptions;
 
-public class WhiteSpaceException extends IllegalArgumentException
+public class WhiteSpaceException extends Exception
 {
     public WhiteSpaceException()
     {
@@ -9,13 +9,5 @@ public class WhiteSpaceException extends IllegalArgumentException
     public WhiteSpaceException(String message)
     {
         super(message);
-    }
-    public WhiteSpaceException(String message , Throwable cause)
-    {
-        super(message,cause);
-    }
-    public WhiteSpaceException(Throwable cause)
-    {
-        super(cause);
     }
 }

@@ -4,13 +4,14 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import lombok.Getter;
+import lombok.Setter;
 import jakarta.persistence.Column;
 
-@NoArgsConstructor(access = AccessLevel.PUBLIC)
-@AllArgsConstructor(access = AccessLevel.PUBLIC)
+@Getter
+@Setter
 @Entity
 @Table(name = "admins", uniqueConstraints = 
 {
@@ -19,27 +20,15 @@ import jakarta.persistence.Column;
 })
 public class Admins 
 {
+    @Column(name = "email" )
+    @NotBlank(message = "The email must not be empty")
+    @Email
+    private String email;
 
-    @Id
-    @Column(name = "username", nullable = false, updatable = false)
-    private String username;
-
-    @Column(name = "phone_number" , nullable = false , updatable = false)
+    @Column(name = "phone_number")
     private String phoneNumber;
 
-    @Column(name = "password_hash", nullable = false)
+    @Column(name = "password_hash")
     private String passwordHash;
 
-    public String getUsername() 
-    {
-        return username;
-    }
-    public String getPhoneNumber()
-    {
-        return phoneNumber;
-    }
-    public String getPasswordHash() 
-    {
-        return passwordHash;
-    }
 }

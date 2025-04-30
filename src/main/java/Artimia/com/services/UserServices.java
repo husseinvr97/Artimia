@@ -31,7 +31,21 @@ public class UserServices
             return PasswordStrength.ABOVE_AVERAGE;
         return PasswordStrength.STRONG;
     }
-    public String hashPassword(String plainPassword)
+    public static boolean IsValidPassword(String plainPassword) throws WhiteSpaceException
+    {
+        try 
+        {
+            PasswordStrength passwordStrength = passwordStrength(plainPassword);
+            if(passwordStrength.ordinal() < PasswordStrength.ABOVE_AVERAGE.ordinal())
+                return false;
+        } catch (WhiteSpaceException e) 
+        {
+            throw e;
+        }
+        
+        return true;
+    }
+    public static String hashPassword(String plainPassword)
     {
         return passwordEncoder.encode(plainPassword);
     }
