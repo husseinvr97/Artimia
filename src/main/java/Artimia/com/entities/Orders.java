@@ -24,37 +24,38 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(name = "users",indexes = {
-    @Index(name = "idx_order_status_index", columnList = "status")
+@Table(name = "orders",indexes = {
+    @Index(name = "order_status_index", columnList = "status"),
+    @Index(name = "order_date_index",columnList = "order_date")
 })
 public class Orders 
 {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "product_id", updatable = false , insertable = false)
+    @Column(name = "order_id", updatable = false)
     private Long orderID;
 
     @ManyToOne
-    @JoinColumn(name = "user_id", updatable = false)
+    @JoinColumn(name = "user_id")
     private Users user; 
 
     @CreationTimestamp
     @Column(name = "order_date", updatable = false)
     private LocalDateTime orderDate;
 
-    @Column(name = "total_amount",precision = 10,scale = 2) // precision checks are at the DTO remove them and add them there
+    @Column(name = "total_amount",precision = 10,scale = 2, nullable = false) // precision checks are at the DTO remove them and add them there
     private BigDecimal totalAmount;
-
+ 
     @Enumerated(EnumType.STRING)
-    @Column(name = "status",length = 20)
-    private OrderStatus orderstatue;
+    @Column(name = "status")
+    private OrderStatus orderStatus = OrderStatus.PENDING;
 
-    @Column(name = "shipping_address",columnDefinition = "TEXT")
+    @Column(name = "shipping_address",columnDefinition = "TEXT",nullable = false)
     private String shippingAddress;
 
     
     @Enumerated(EnumType.STRING)
-    @Column(name = "payment_method", length = 20)
+    @Column(name = "payment_method",nullable = false)
     private PaymentMethod paymentMethod;
 }

@@ -5,10 +5,10 @@ import Artimia.com.entities.FareedDialogues;
 
 public class FareedDialogueMapper {
     public static FareedDialogueGetDTO toDto(FareedDialogues dialogue) {
-        return new FareedDialogueGetDTO(
-            dialogue.getDialogueId(),
+        return new FareedDialogueGetDTO
+        (
             dialogue.getDialogueText(),
-            dialogue.getContext()
+            dialogue.getContext() 
         );
     }
 }

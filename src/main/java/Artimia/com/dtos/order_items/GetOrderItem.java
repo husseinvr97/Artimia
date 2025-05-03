@@ -8,7 +8,7 @@ public record GetOrderItem
         Long orderId,
         Long productId,
         Long sizeId,
-        Integer quantity,
+        Long quantity,
         BigDecimal unitPrice,
         String productName,
         String sizeLabel

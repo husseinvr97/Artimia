@@ -11,4 +11,5 @@ import Artimia.com.entities.Governorate;
 public interface GovernorateRepository extends JpaRepository<Governorate, Long> 
 {
     Optional<Governorate> findByGid(String gid);
+    Optional<Governorate> findByNameEn(String name);
 }

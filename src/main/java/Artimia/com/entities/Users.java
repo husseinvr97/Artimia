@@ -5,7 +5,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import jakarta.persistence.UniqueConstraint;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
@@ -22,11 +21,7 @@ import jakarta.persistence.Column;
 @Getter
 @Setter
 @Entity
-@Table(name = "users",
-       uniqueConstraints = {
-           @UniqueConstraint(columnNames = "email"),
-           @UniqueConstraint(columnNames = "phone_number")
-       })
+@Table(name = "users")
 public class Users 
 {
 
@@ -48,16 +43,16 @@ public class Users
     @Column(name = "user_id", updatable = false)
     private Long userId;
 
-    @Column(name = "email" , nullable = false)
+    @Column(name = "email" , nullable = false , length = 100)
     @NotBlank(message = "The email must not be empty")
     @Email
     private String email;
     
-    @Column(name = "phone_number",nullable = false)
+    @Column(name = "phone_number", nullable = false , length = 20)
     @NotBlank(message = "The phone number must not be empty")
     private String phoneNumber;
 
-    @Column(name="password_hash",nullable = false)
+    @Column(name="password_hash",nullable = false , length = 100)
     private String passwordHash;
 
     @CreationTimestamp

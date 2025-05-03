@@ -7,7 +7,7 @@ import jakarta.validation.constraints.Positive;
 public record UpdateOrderItem
 (
     @Positive(message = "Quantity must be positive")
-    Integer quantity,
+    Long quantity,
 
     @Positive(message = "Unit price must be positive")
     BigDecimal unitPrice

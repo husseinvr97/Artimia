@@ -15,7 +15,8 @@ import lombok.Setter;
 
 @Entity
 @Table(name = "user_addresses")
-public class UserAddress {
+public class UserAddress 
+{
 
     @Getter
     @Id
@@ -37,25 +38,20 @@ public class UserAddress {
 
     @Getter
     @Setter
-    @NotBlank(message = "City is required")
-    @Column(nullable = false, length = 100)
-    private String city;
+    @ManyToOne
+    @JoinColumn(name = "governorate_id",nullable = false)
+    private Governorate governorate;
 
     @Getter
     @Setter
-    @NotBlank(message = "State is required")
-    @Column(nullable = false, length = 100)
-    private String state;
+    @ManyToOne
+    @JoinColumn(name = "city_id",nullable = false)
+    private City city;
 
     @Getter
     @Setter
     @NotBlank(message = "Postal code is required")
     @Column(name = "postal_code", nullable = false, length = 20)
     private String postalCode;
-
-    @Getter
-    @Setter
-    @NotBlank(message = "Country is required")
-    @Column(nullable = false, length = 100)
-    private String country;
+    
 }

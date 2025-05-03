@@ -20,24 +20,24 @@ public interface ProductSizesRepository extends JpaRepository<ProductSizes, Long
     List<ProductSizes> findByProduct(Products product);
     Optional<ProductSizes> findByProductAndSize(Products product, Size size);
     
-    @Query("SELECT ps FROM ProductSize ps WHERE ps.product.productId = :productId")
+    @Query("SELECT ps FROM ProductSizes ps WHERE ps.product.productId = :productId")
     List<ProductSizes> findByProductId(@Param("productId") Long productId);
 
-    @Query("SELECT ps.quantity FROM ProductSize ps WHERE ps.size = :size AND ps.product.productId = :productId")
+    @Query("SELECT ps.quantity FROM ProductSizes ps WHERE ps.size = :size AND ps.product.productId = :productId")
     Optional<Integer> findStockQuantity(@Param("productId") Long productId, @Param("size") Size size);
 
-    @Query("SELECT ps.additionalPrice FROM ProductSize ps WHERE ps.product.productId = :productId AND ps.size = :size")
+    @Query("SELECT ps.additionalPrice FROM ProductSizes ps WHERE ps.product.productId = :productId AND ps.size = :size")
     Optional<BigDecimal> findAdditionalPrice(@Param("productId") Long productId,@Param("size") Size size);
 
     @Modifying
-    @Query("UPDATE ProductSize ps SET ps.quantity = ps.quantity + :quantity WHERE ps.sizeId = :sizeId")
+    @Query("UPDATE ProductSizes ps SET ps.quantity = ps.quantity + :quantity WHERE ps.sizeId = :sizeId")
     int updateStockQuantity(@Param("sizeId") Long sizeId,@Param("quantity") int quantity);
 
-    @Query("SELECT ps FROM ProductSize ps JOIN FETCH ps.product WHERE ps.product.productId = :productId")
+    @Query("SELECT ps FROM ProductSizes ps JOIN FETCH ps.product WHERE ps.product.productId = :productId")
     List<ProductSizes> findWithProductDetails(@Param("productId") Long productId);
 
     boolean existsByProductAndSize(Products product, Size size);
 
-    @Query("SELECT ps.length, ps.width FROM ProductSize ps WHERE ps.product.productId = :productId AND ps.size = :size")
+    @Query("SELECT ps.length, ps.width FROM ProductSizes ps WHERE ps.product.productId = :productId AND ps.size = :size")
     Optional<Object[]> findDimensions(@Param("productId") Long productId,@Param("size") Size size);
 }

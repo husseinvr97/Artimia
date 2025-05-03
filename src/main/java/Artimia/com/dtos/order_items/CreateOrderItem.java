@@ -15,10 +15,10 @@ public record CreateOrderItem
 
         @NotNull(message = "Size ID cannot be null")
         Long sizeId,
-
+ 
         @Positive(message = "Quantity must be positive")
         @NotNull(message = "Quantity cannot be null")
-        Integer quantity,
+        Long quantity,
 
         @Positive(message = "Unit price must be positive")
         @NotNull(message = "Unit price cannot be null")

@@ -32,6 +32,7 @@ import lombok.AllArgsConstructor;
 public class UsersController 
 {
     private final UserRepository userRepository;
+    private final UserServices userServices;
 
 
     @PostMapping
@@ -46,7 +47,7 @@ public class UsersController
         }
         try 
         {
-            if(!UserServices.IsValidPassword(request.password()))
+            if(!userServices.IsValidPassword(request.password()))
             throw new WeakPasswordException();
         } catch (WhiteSpaceException e) 
         {
@@ -58,9 +59,10 @@ public class UsersController
         newUser.setLastName(request.lastName());
         newUser.setEmail(request.email());
         newUser.setPhoneNumber(request.phoneNumber());
-        newUser.setPasswordHash(UserServices.hashPassword(request.password()));
+        newUser.setPasswordHash(userServices.hashPassword(request.password()));
 
         Users savedUser = userRepository.save(newUser);
+        System.out.println("Login sucess");
 
         return new ResponseEntity<>(mapToDto(savedUser),HttpStatus.CREATED);
     }
@@ -105,9 +107,9 @@ public class UsersController
         {
             try 
             {
-                if(!UserServices.IsValidPassword(request.password()))
+                if(!userServices.IsValidPassword(request.password()))
                     throw new WeakPasswordException();
-                user.setPasswordHash(UserServices.hashPassword(request.password()));
+                user.setPasswordHash(userServices.hashPassword(request.password()));
             } catch (WhiteSpaceException e) {
                 throw new WeakPasswordException(e.getMessage());
             }

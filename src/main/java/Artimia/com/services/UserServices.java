@@ -12,8 +12,8 @@ import Artimia.com.exceptions.WhiteSpaceException;
 public class UserServices 
 {
     @Autowired
-    private static PasswordEncoder passwordEncoder;
-    public static PasswordStrength passwordStrength(String plainPassword) throws WhiteSpaceException
+    private PasswordEncoder passwordEncoder;
+    public PasswordStrength passwordStrength(String plainPassword) throws WhiteSpaceException
     {
         if(StringUtils.containsAny(plainPassword,"       "))
             throw new WhiteSpaceException("Password cannot contain any whitespaces");
@@ -31,7 +31,7 @@ public class UserServices
             return PasswordStrength.ABOVE_AVERAGE;
         return PasswordStrength.STRONG;
     }
-    public static boolean IsValidPassword(String plainPassword) throws WhiteSpaceException
+    public boolean IsValidPassword(String plainPassword) throws WhiteSpaceException
     {
         try 
         {
@@ -45,7 +45,7 @@ public class UserServices
         
         return true;
     }
-    public static String hashPassword(String plainPassword)
+    public String hashPassword(String plainPassword)
     {
         return passwordEncoder.encode(plainPassword);
     }

@@ -36,26 +36,25 @@ public class ProductSizes
     private Long sizeId;
 
     @ManyToOne
-    @NotNull
-    @JoinColumn(name = "product_id", nullable = false)
+    @NotNull(message = "product ID cannot be null")
+    @JoinColumn(name = "product_id")
     private Products product;
 
     @Enumerated(EnumType.STRING)
     @NotNull
-    @Column(nullable = false, length = 6)
-    private Size size;
+    @Column(nullable = false)
+    private Size size = Size.SMALL;
 
-    @NotNull
+    @NotNull(message = "length cannot be null")
     @Column(nullable = false, precision = 5, scale = 2)
     private BigDecimal length;
 
-    @NotNull
+    @NotNull(message = "width cannot be null")
     @Column(nullable = false, precision = 5, scale = 2)
     private BigDecimal width;
 
-    @NotNull
     @Column(nullable = false, columnDefinition = "INT DEFAULT 0")
-    private Integer quantity;
+    private Integer quantity = 0;
 
     @NotNull
     @Column(name = "additional_price", nullable = false, precision = 10, scale = 2)

@@ -20,13 +20,13 @@ import jakarta.validation.ConstraintViolationException;
 @Component
 public class StrongPasswordValidator implements ConstraintValidator<StrongPassword, String> 
 {
-
+    private UserServices userServices;
     @Override
     public boolean isValid(String passwordPlain, ConstraintValidatorContext context) 
     {
         try 
         {
-            final PasswordStrength passwordStrength = UserServices.passwordStrength(passwordPlain);
+            final PasswordStrength passwordStrength = userServices.passwordStrength(passwordPlain);
             if(passwordStrength.equals(PasswordStrength.WEAK) || passwordStrength.equals(PasswordStrength.BELOW_AVERAGE))
                 return false;
         } catch (WhiteSpaceException e) 

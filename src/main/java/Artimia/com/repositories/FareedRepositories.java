@@ -10,5 +10,6 @@ import Artimia.com.enums.Context;
 public interface FareedRepositories extends JpaRepository<FareedDialogues , Long>
 {
     List<FareedDialogues> findByContext(Context context);
-    List<FareedDialogues> findByDialogueTextContainningIgnoreCase(String keyword);
+    List<FareedDialogues> findByDialogueTextContainingIgnoreCase(String keyword);
 }
+ 

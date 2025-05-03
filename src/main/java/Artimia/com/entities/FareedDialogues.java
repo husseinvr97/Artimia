@@ -26,8 +26,8 @@ public class FareedDialogues
     @Column(name = "dialogue_text", nullable = false, columnDefinition = "TEXT")
     private String dialogueText;
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false, columnDefinition = "ENUM('WELCOME', 'CHECKOUT', 'HELP') DEFAULT 'HELP'")
+    @Enumerated(EnumType.STRING) 
+    @Column(name = "context", columnDefinition = "ENUM('WELCOME', 'CHECKOUT', 'HELP') DEFAULT 'HELP'")
     private Context context = Context.HELP;
 
 }

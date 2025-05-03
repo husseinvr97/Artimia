@@ -19,7 +19,7 @@ public class FareedDialogueService {
     public List<FareedDialogueGetDTO> getAllDialogues() {
         return dialogueRepository.findAll().stream()
             .map(FareedDialogueMapper::toDto)
-            .toList();
+            .toList(); 
     }
 
     public FareedDialogueGetDTO getDialogueById(Long id) {

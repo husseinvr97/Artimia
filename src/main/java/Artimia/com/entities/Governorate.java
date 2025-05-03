@@ -17,12 +17,13 @@ public class Governorate
 {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    @Column(name = "governorate_id")
+    private long governorate_Id;
 
     @Column(name = "gid" , unique = true)
     private String gid;
 
-    @Column(name = "name_en")
+    @Column(name = "name_en") 
     private String nameEn;
 
     @Column(name = "name_ar")

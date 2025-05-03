@@ -19,7 +19,7 @@ public interface OrdersRepository extends JpaRepository<Orders, Long> {
 
     // Basic query methods
     List<Orders> findByUser(Users user);
-    List<Orders> findByOrderStatus(OrderStatus status);
+    List<Orders> findByOrderStatus(OrderStatus orderStatus);
     
     // Date range queries
     List<Orders> findByOrderDateBetween(LocalDateTime startDate, LocalDateTime endDate);
@@ -33,19 +33,19 @@ public interface OrdersRepository extends JpaRepository<Orders, Long> {
 
     // Optimized status update
     @Modifying
-    @Query("UPDATE Orders o SET o.orderStatus = :status WHERE o.orderId = :orderId")
-    int updateOrderStatus(@Param("orderId") Long orderId, 
-                        @Param("status") OrderStatus newStatus);
+    @Query("UPDATE Orders o SET o.orderStatus = :status WHERE o.orderID = :orderID")
+    int updateOrderStatus(@Param("orderID") Long orderId, 
+                        @Param("orderStatus") OrderStatus newStatus);
 
     // Complex search combining multiple fields
     @Query("SELECT o FROM Orders o WHERE " +
            "(:userId IS NULL OR o.user.userId = :userId) AND " +
-           "(:status IS NULL OR o.orderStatus = :status) AND " +
+           "(:status IS NULL OR o.orderStatus = :orderStatus) AND " +
            "(:minDate IS NULL OR o.orderDate >= :minDate) AND " +
            "(:maxDate IS NULL OR o.orderDate <= :maxDate)")
     List<Orders> searchOrders(
         @Param("userId") Long userId,
-        @Param("status") OrderStatus status,
+        @Param("orderStatus") OrderStatus status,
         @Param("minDate") LocalDateTime minDate,
         @Param("maxDate") LocalDateTime maxDate
     );

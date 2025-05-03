@@ -4,5 +4,6 @@ public enum Context
 {
     WELCOME,
     CHECKOUT,
-    HELP
+    HELP,
+    DESCRIBE
 }

@@ -1,0 +1,21 @@
+package Artimia.com.mapper;
+
+import Artimia.com.dtos.order_items.GetOrderItem;
+import Artimia.com.entities.OrderItems;
+
+public class OrderItemMapper 
+{
+    public static GetOrderItem toGetDto(OrderItems item) 
+    { 
+        return new GetOrderItem(
+            item.getOrderItemId(),
+            item.getOrder().getOrderID(),
+            item.getProduct().getProductId(),
+            item.getSize().getSizeId(),
+            item.getQuantity(),
+            item.getUnitPrice(),
+            item.getProduct().getProductName(),
+            item.getSize().getSize().toString()
+        );
+    }
+}

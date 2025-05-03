@@ -16,22 +16,26 @@ public class FareedController {
     private final FareedDialogueService dialogueService;
 
     @GetMapping
-    public List<FareedDialogueGetDTO> getAllDialogues() {
+    public List<FareedDialogueGetDTO> getAllDialogues() 
+    {
         return dialogueService.getAllDialogues();
     }
 
     @GetMapping("/{id}")
-    public FareedDialogueGetDTO getDialogueById(@PathVariable Long id) {
+    public FareedDialogueGetDTO getDialogueById(@PathVariable Long id) 
+    {
         return dialogueService.getDialogueById(id);
     }
 
     @GetMapping("/context/{context}")
-    public List<FareedDialogueGetDTO> getDialoguesByContext(@PathVariable Context context) {
+    public List<FareedDialogueGetDTO> getDialoguesByContext(@PathVariable Context context) 
+    {
         return dialogueService.getDialoguesByContext(context);
     }
 
     @PutMapping("/{id}")
-    public FareedDialogueGetDTO updateDialogue(
+    public FareedDialogueGetDTO updateDialogue
+    (
         @PathVariable Long id,
         @RequestParam String text,
         @RequestParam Context context
