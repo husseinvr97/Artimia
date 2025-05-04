@@ -28,7 +28,7 @@ import lombok.AllArgsConstructor;
 
 @AllArgsConstructor(access = AccessLevel.PUBLIC)
 @RestController
-@RequestMapping("api/users")
+@RequestMapping("/api/users")
 public class UsersController 
 {
     private final UserRepository userRepository;
@@ -62,7 +62,6 @@ public class UsersController
         newUser.setPasswordHash(userServices.hashPassword(request.password()));
 
         Users savedUser = userRepository.save(newUser);
-        System.out.println("Login sucess");
 
         return new ResponseEntity<>(mapToDto(savedUser),HttpStatus.CREATED);
     }

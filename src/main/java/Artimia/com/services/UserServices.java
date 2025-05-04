@@ -49,4 +49,8 @@ public class UserServices
     {
         return passwordEncoder.encode(plainPassword);
     }
+    public boolean verifyPassword(String rawPassword, String hashedPassword)
+    {
+        return passwordEncoder.matches(rawPassword, hashedPassword);
+    }
 }

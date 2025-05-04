@@ -1,7 +1,11 @@
 package Artimia.com.controllers;
 
 import org.springframework.security.authentication.BadCredentialsException;
+
+import Artimia.com.entities.Users;
+import Artimia.com.repositories.UserRepository;
 import Artimia.com.services.JwtUtil;
+import Artimia.com.services.UserServices;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.constraints.Email;
@@ -30,11 +34,12 @@ public class AuthController
     private final JwtUtil jwtUtil;
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody LoginRequest request, HttpServletResponse response) {
-        try {
-            Authentication authentication = authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(request.email(), request.password())
-            );
+    public ResponseEntity<?> login(@RequestBody LoginRequest request, HttpServletResponse response) 
+    {
+        try 
+        {
+            Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.email(),request.password()));
+        
             UserDetails userDetails = (UserDetails) authentication.getPrincipal();
             String token = jwtUtil.generateToken(userDetails);
 
@@ -45,18 +50,20 @@ public class AuthController
             cookie.setMaxAge((int) (jwtUtil.getEXPIRATION_TIME() / 1000));
             response.addCookie(cookie);
 
-            return ResponseEntity.ok().body("Login successful");
-        } catch (Exception e) {
-            throw new BadCredentialsException("Invalid username or password");
+            return ResponseEntity.ok("Login successful");
+        } 
+        catch (BadCredentialsException e) 
+        {
+            throw new BadCredentialsException("Invalid email or password");
         }
-    }
-
-@ResponseStatus(HttpStatus.UNAUTHORIZED)
-@ExceptionHandler(BadCredentialsException.class)
-public ErrorResponse handleBadCredentials(BadCredentialsException ex) 
-{
-    return new ErrorResponse(ex.getMessage());
 }
+
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    @ExceptionHandler(BadCredentialsException.class)
+    public ErrorResponse handleBadCredentials(BadCredentialsException ex) 
+    {
+        return new ErrorResponse(ex.getMessage());
+    }
     public record ErrorResponse(String message){}
     @Validated
     public record LoginRequest(@Email String email, String password) {}
