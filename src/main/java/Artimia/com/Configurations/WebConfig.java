@@ -15,6 +15,6 @@ public class WebConfig implements WebMvcConfigurer
                 .allowedOrigins("*") // or specify your frontend URL "http://127.0.0.1:5500"
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                 .allowedHeaders("*")
-                .allowCredentials(false); // set to true if using cookies/auth
+                .allowCredentials(true); // set to true if using cookies/auth
     }
 }

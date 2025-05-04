@@ -2,10 +2,7 @@ package Artimia.com.controllers;
 
 import org.springframework.security.authentication.BadCredentialsException;
 
-import Artimia.com.entities.Users;
-import Artimia.com.repositories.UserRepository;
 import Artimia.com.services.JwtUtil;
-import Artimia.com.services.UserServices;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.constraints.Email;
@@ -50,7 +47,7 @@ public class AuthController
             cookie.setMaxAge((int) (jwtUtil.getEXPIRATION_TIME() / 1000));
             response.addCookie(cookie);
 
-            return ResponseEntity.ok("Login successful");
+            return ResponseEntity.ok().body(new AuthResponse("Login successful", token));
         } 
         catch (BadCredentialsException e) 
         {
@@ -67,4 +64,5 @@ public class AuthController
     public record ErrorResponse(String message){}
     @Validated
     public record LoginRequest(@Email String email, String password) {}
+    public record AuthResponse(String message, String token) {}
 }
