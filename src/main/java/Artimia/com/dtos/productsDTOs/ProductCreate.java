@@ -2,6 +2,8 @@ package Artimia.com.dtos.productsDTOs;
 
 import java.math.BigDecimal;
 
+import org.springframework.web.multipart.MultipartFile;
+
 import Artimia.com.enums.Style;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -17,7 +19,7 @@ public record ProductCreate
     String description,
     @NotNull(message = "The style cannot be null")
     Style style,
-    @NotBlank(message = "the imageUrl is required")
-    String imageUrl
+    @NotNull
+    MultipartFile image
 ) 
 {}

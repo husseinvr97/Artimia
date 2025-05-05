@@ -28,8 +28,6 @@ import java.math.BigDecimal;
 )
 public class ProductSizes 
 {
-
-    
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "size_id", updatable = false)

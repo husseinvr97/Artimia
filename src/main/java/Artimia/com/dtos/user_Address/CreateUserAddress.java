@@ -3,7 +3,8 @@ package Artimia.com.dtos.user_Address;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
-public record CreateUserAddress(
+public record CreateUserAddress
+(
         @NotNull(message = "User ID cannot be null")
         Long userId,
 
@@ -22,4 +23,4 @@ public record CreateUserAddress(
         @NotBlank(message = "Country is required")
         String country
 
-    ) {}
+) {}

@@ -1,4 +1,3 @@
-// Controller Layer
 package Artimia.com.controllers;
 
 import Artimia.com.dtos.productsDTOs.ProductCreate;
@@ -7,11 +6,16 @@ import Artimia.com.enums.Style;
 import Artimia.com.services.ProductService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.List;
 
@@ -23,21 +27,31 @@ public class ProductController
 
     private final ProductService productService;
 
-    @PostMapping
+
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
-    public ProductGet createProduct(@Valid @RequestBody ProductCreate productCreate) {
-        return productService.createProduct(productCreate);
+    public ResponseEntity<?> createProduct(@Valid @RequestBody ProductCreate productCreate,@Valid @RequestPart MultipartFile image) 
+    {
+        try
+        {
+            return new ResponseEntity<>(productService.createProduct(productCreate),HttpStatus.CREATED);
+        } 
+        catch (IOException e) 
+        {
+            return new ResponseEntity<>(new ErrorResponse(e.getMessage()) ,HttpStatus.CREATED);
+        }
     }
 
     @GetMapping
-    public Page<ProductGet> getAllProducts(Pageable pageable) {
+    public Page<ProductGet> getAllProducts(Pageable pageable)
+    {
         return productService.getAllProducts(pageable);
     }
 
     @GetMapping("/{id}")
-    public ProductGet getProductById(@PathVariable Long id) {
-        return productService.getProductById(id)
-                .orElseThrow(() -> new RuntimeException("Product not found"));
+    public ProductGet getProductById(@PathVariable Long id)
+    {
+        return productService.getProductById(id);
     }
 
     @GetMapping("/search")
@@ -50,17 +64,29 @@ public class ProductController
     }
 
     @GetMapping("/summaries")
-    public Page<Object[]> getProductSummaries(Pageable pageable) {
+    public Page<Object[]> getProductSummaries(Pageable pageable) 
+    {
         return productService.getProductSummaries(pageable);
     }
 
     @GetMapping("/top")
-    public List<ProductGet> getTopProducts() {
+    public List<ProductGet> getTopProducts() 
+    {
         return productService.getTopProducts();
     }
 
     @PatchMapping("/{id}/purchase")
-    public void recordPurchase(@PathVariable Long id) {
+    public void recordPurchase(@PathVariable Long id) 
+    {
         productService.incrementTimesBought(id);
     }
+
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteProduct(@PathVariable Long id)
+    {
+        productService.deleteProduct(id);
+    }
+
+    public record ErrorResponse(String message) {}
 }

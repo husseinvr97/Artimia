@@ -13,7 +13,7 @@ public class WebConfig implements WebMvcConfigurer
     {
         registry.addMapping("/**")
                 .allowedOrigins("*") // or specify your frontend URL "http://127.0.0.1:5500"
-                .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
+                .allowedMethods("GET", "POST", "PUT", "DELETE")
                 .allowedHeaders("*")
                 .allowCredentials(true); // set to true if using cookies/auth
     }

@@ -6,6 +6,5 @@ public record GetUserAddress(
         String addressLine1,
         String city,
         String state,
-        String postalCode,
-        String country
+        String postalCode
     ) {}
