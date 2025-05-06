@@ -5,6 +5,7 @@ import org.springframework.security.authentication.BadCredentialsException;
 import Artimia.com.services.JwtUtil;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 import lombok.RequiredArgsConstructor;
 
@@ -25,13 +26,13 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
-public class AuthController 
+public class AuthController
 {
     private final AuthenticationManager authenticationManager;
     private final JwtUtil jwtUtil;
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody LoginRequest request, HttpServletResponse response) 
+    public ResponseEntity<?> login(@RequestBody @Valid LoginRequest request, HttpServletResponse response) 
     {
         try 
         {
@@ -53,7 +54,7 @@ public class AuthController
         {
             throw new BadCredentialsException("Invalid email or password");
         }
-}
+} 
 
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     @ExceptionHandler(BadCredentialsException.class)

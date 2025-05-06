@@ -23,12 +23,12 @@ import Artimia.com.exceptions.WhiteSpaceException;
 import Artimia.com.repositories.UserRepository;
 import Artimia.com.services.UserServices;
 import jakarta.validation.Valid;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 
-@AllArgsConstructor(access = AccessLevel.PUBLIC)
+
 @RestController
 @RequestMapping("/api/users")
+@RequiredArgsConstructor
 public class UsersController 
 {
     private final UserRepository userRepository;
@@ -36,7 +36,7 @@ public class UsersController
 
 
     @PostMapping
-    public ResponseEntity<UserGet> createUser(@Valid@RequestBody UserCreate request)
+    public ResponseEntity<UserGet> createUser(@RequestBody UserCreate request)
     {
         if (userRepository.existsByEmail(request.email())) 
         {
@@ -69,7 +69,7 @@ public class UsersController
     @GetMapping("/{userId}")
     public ResponseEntity<UserGet> getUser(@PathVariable Long userId)
     {
-        return userRepository.findById(userId).map(user -> ResponseEntity.ok(mapToDto(user))).orElseGet(()->ResponseEntity.notFound().build());
+        return userRepository.findById(userId).map(user -> ResponseEntity.ok(mapToDto(user))).orElseThrow(()->new ResourceNotFoundException("User Not Found"));
     }
 
     @PutMapping("/{userId}")

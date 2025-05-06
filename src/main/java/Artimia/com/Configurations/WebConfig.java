@@ -7,14 +7,14 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration
 public class WebConfig implements WebMvcConfigurer 
 {
-
     @Override
     public void addCorsMappings(CorsRegistry registry) 
     {
         registry.addMapping("/**")
-                .allowedOrigins("*") // or specify your frontend URL "http://127.0.0.1:5500"
-                .allowedMethods("GET", "POST", "PUT", "DELETE")
+                .allowedOrigins("http://localhost:8080", "http://127.0.0.1:5500")
+                .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                 .allowedHeaders("*")
-                .allowCredentials(true); // set to true if using cookies/auth
+                .allowCredentials(true)
+                .maxAge(3600);
     }
 }
