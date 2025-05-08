@@ -9,7 +9,8 @@ public class GovernorateMapper
     {
         return new GovernorateGet
         (
-            governorate.getNameEn()
+            governorate.getNameEn(),
+            governorate.getGovernorateId()
         );
     }
 }

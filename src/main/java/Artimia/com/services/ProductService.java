@@ -14,6 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -28,16 +29,17 @@ public class ProductService
     private final FileStorageService fileStorageService;
 
     @Transactional
-    public ResponseEntity<ProductGet> createProduct(ProductCreate productCreate) throws IOException
+    public ResponseEntity<ProductGet> createProduct(ProductCreate productCreate,MultipartFile image) throws IOException
     {
         Products product = new Products();
         product.setProductName(productCreate.productName());
         product.setPrice(productCreate.Price());
         product.setDescription(productCreate.description());
         product.setStyle(productCreate.style());
-        if (productCreate.image() != null && productCreate.image().isEmpty()) 
+        if (image != null && !image.isEmpty()) 
         {
-            String filename = fileStorageService.storeFile(productCreate.image());
+            System.out.println("Working fine");
+            String filename = fileStorageService.storeFile(image);
             product.setImageUrl("/uploads/" + filename);
         }
         

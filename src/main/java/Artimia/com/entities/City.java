@@ -23,17 +23,10 @@ public class City
     @Column(name = "city_id")
     private Long cityId;
 
-    @Column(name = "gid" , length = 20)
-    private String gid;
-
     @Column(name = "name_en" , length = 100)
     private String nameEn;
 
-    @Column(name = "name_ar" , length = 100)
-    private String nameAr;
-
     @ManyToOne
-    @JoinColumn(name = "governorate_gid", referencedColumnName = "gid")
+    @JoinColumn(name = "governorate_id", referencedColumnName = "governorate_id")
     private Governorate governorate;
-    
 }

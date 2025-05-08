@@ -16,6 +16,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+import org.json.JSONTokener;
+import java.io.FileReader;
+
 @Service
 @RequiredArgsConstructor
 public class UserAddressesServices 
@@ -26,7 +31,8 @@ public class UserAddressesServices
     private final GovernorateRepository governorateRepository;
 
     @Transactional
-    public GetUserAddress createUserAddress(CreateUserAddress dto) {
+    public GetUserAddress createUserAddress(CreateUserAddress dto) 
+    {
         Users user = userRepository.findById(dto.userId())
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
         
@@ -70,6 +76,46 @@ public class UserAddressesServices
         userAddressRepository.deleteById(addressId);
     }
 
+    
+    
+    public void importAllRegions()
+    {
+        
+        String filePath = "E:\\Artimia\\src\\main\\resources\\egypt_admin.geojson";
+            
+        try (FileReader reader = new FileReader(filePath)) 
+        {
+                
+            JSONTokener tokener = new JSONTokener(reader);
+            JSONObject geoJson = new JSONObject(tokener);
+                
+            JSONArray features = geoJson.getJSONArray("features");
+
+            for (int i = 0; i < features.length(); i++) 
+            {
+                JSONObject feature = features.getJSONObject(i);
+                JSONObject properties = feature.getJSONObject("properties");
+                    
+                String governorateName = properties.getString("NAME_1");
+                if(!governorateRepository.existsByNameEn(governorateName))
+                {
+                    Governorate governorate = new Governorate();
+                    governorate.setNameEn(governorateName);
+                    governorateRepository.save(governorate);
+                }
+                String cityName = properties.getString("NAME_2");
+                City city = new City();
+                city.setGovernorate(governorateRepository.findByNameEn(governorateName).orElseThrow(()-> new ResourceNotFoundException("Governorate Not Found")));
+                city.setNameEn(cityName);
+            }
+        } 
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+        
+    }
+    
     private GetUserAddress convertToGetDTO(UserAddress address) 
     {
         return new GetUserAddress(

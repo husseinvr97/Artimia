@@ -10,6 +10,8 @@ import Artimia.com.entities.Governorate;
 @Repository
 public interface GovernorateRepository extends JpaRepository<Governorate, Long> 
 {
-    Optional<Governorate> findByGid(String gid);
-    Optional<Governorate> findByNameEn(String name);
+    boolean existsByNameEn(String nameEn);
+    Optional<Governorate> findByNameEn(String nameEn);
+    Optional<Governorate> findByGovernorateId(Long governorateId);
+    boolean existsByGovernorateId(Long governorateId);
 }

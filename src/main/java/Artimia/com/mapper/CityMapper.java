@@ -10,8 +10,9 @@ public class CityMapper
     public static CityGet toDto(City city) 
     {
         return new CityGet(
-            govRepo.findByGid(city.getGid()).get().getNameEn(),
-            city.getNameEn()
+            city.getGovernorate().getNameEn(),
+            city.getNameEn(),
+            city.getCityId()
         );
     }
 }

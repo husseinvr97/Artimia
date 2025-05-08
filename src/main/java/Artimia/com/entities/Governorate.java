@@ -18,14 +18,8 @@ public class Governorate
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "governorate_id")
-    private long governorate_Id;
-
-    @Column(name = "gid" , unique = true)
-    private String gid;
+    private long governorateId;
 
     @Column(name = "name_en") 
     private String nameEn;
-
-    @Column(name = "name_ar")
-    private String nameAr;
 }

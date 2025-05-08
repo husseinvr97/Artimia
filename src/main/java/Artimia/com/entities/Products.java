@@ -58,7 +58,6 @@ public class Products
     private Set<ProductSizes> sizes;
 
     @Column(name = "main_image_url", nullable = false , unique = true)
-    @Pattern(regexp = "^(https?)://[^\\s/$.?#].[^\\s]*\\.(png|jpg|jpeg|gif)(\\?.*)?$",message = "Invalid image URL format")
     private String imageUrl;
 
     @Column(name = "times_bought", columnDefinition = "INT DEFAULT 0")

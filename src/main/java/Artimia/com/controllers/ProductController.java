@@ -4,7 +4,6 @@ import Artimia.com.dtos.productsDTOs.ProductCreate;
 import Artimia.com.dtos.productsDTOs.ProductGet;
 import Artimia.com.enums.Style;
 import Artimia.com.services.ProductService;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.http.MediaType;
@@ -27,20 +26,24 @@ public class ProductController
 
     private final ProductService productService;
 
+@PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+@ResponseStatus(HttpStatus.CREATED)
+public ResponseEntity<?> createProduct(@RequestPart("product") ProductCreate productCreate, @RequestPart("image") MultipartFile image)
+{
 
-    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<?> createProduct(@Valid @RequestBody ProductCreate productCreate,@Valid @RequestPart MultipartFile image) 
+
+    if(image != null)
     {
-        try
-        {
-            return new ResponseEntity<>(productService.createProduct(productCreate),HttpStatus.CREATED);
-        } 
-        catch (IOException e) 
-        {
-            return new ResponseEntity<>(new ErrorResponse(e.getMessage()) ,HttpStatus.CREATED);
-        }
+        System.out.println("sssssss");
     }
+    try 
+    {
+        return new ResponseEntity<>(productService.createProduct(productCreate,image), HttpStatus.CREATED);
+    } catch (IOException e) {
+        return new ResponseEntity<>(new ErrorResponse(e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+}
+
 
     @GetMapping
     public Page<ProductGet> getAllProducts(Pageable pageable)
