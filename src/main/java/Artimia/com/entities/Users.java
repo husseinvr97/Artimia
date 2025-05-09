@@ -1,12 +1,15 @@
 package Artimia.com.entities;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
@@ -16,6 +19,7 @@ import java.time.LocalDateTime;
 
 import org.hibernate.annotations.CreationTimestamp;
 
+import Artimia.com.enums.Role;
 import jakarta.persistence.Column;
 
 @Getter
@@ -58,5 +62,10 @@ public class Users
     @CreationTimestamp
     @Column(name = "date_created", updatable = false)
     private LocalDateTime dateCreated;
+
+    @Enumerated(EnumType.STRING)
+    @NotNull
+    @Column(nullable = false)
+    private Role role = Role.USER;
     
 }

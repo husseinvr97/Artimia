@@ -28,6 +28,7 @@ public class FileStorageService
     
     public String storeFile(MultipartFile file) throws IOException 
     {
+        @SuppressWarnings("null")
         String filename = UUID.randomUUID() + "_" + StringUtils.cleanPath(file.getOriginalFilename());
         Path target = uploadDir.resolve(filename);
         Files.copy(file.getInputStream(), target, StandardCopyOption.REPLACE_EXISTING);
