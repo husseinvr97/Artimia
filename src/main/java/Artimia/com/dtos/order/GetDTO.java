@@ -12,6 +12,9 @@ public record GetDTO(
         LocalDateTime orderDate,
         BigDecimal totalAmount,
         OrderStatus status,
-        String shippingAddress,
+        String addressLine1,
+        String governorate,
+        String city,
+        String postalCode,
         PaymentMethod paymentMethod
 ) {}

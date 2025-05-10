@@ -56,6 +56,6 @@ public class ProductSizes
 
     @NotNull
     @Column(name = "additional_price", nullable = false, precision = 10, scale = 2)
-    private BigDecimal additionalPrice; 
+    private BigDecimal additionalPrice;
     
 }

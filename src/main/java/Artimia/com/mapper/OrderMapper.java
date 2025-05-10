@@ -13,8 +13,11 @@ public class OrderMapper
             order.getOrderDate(),
             order.getTotalAmount(),
             order.getOrderStatus(),
-            order.getShippingAddress(),
+            order.getUserAddress().getAddressLine1(),
+            order.getUserAddress().getGovernorate().getNameEn(),
+            order.getUserAddress().getCity().getNameEn(),
+            order.getUserAddress().getPostalCode(),
             order.getPaymentMethod()
-        );
+        ); 
     }
 }

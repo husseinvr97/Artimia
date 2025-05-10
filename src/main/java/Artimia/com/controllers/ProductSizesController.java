@@ -1,6 +1,6 @@
-// ProductSizesController.java
 package Artimia.com.controllers;
 
+import Artimia.com.dtos.errorresponse.ErrorResponse;
 import Artimia.com.dtos.productsizesDTOs.ProductSizesCreate;
 import Artimia.com.dtos.productsizesDTOs.ProductSizesGet;
 import Artimia.com.exceptions.DuplicateProductSizeException;
@@ -10,7 +10,11 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/product-sizes")
@@ -27,7 +31,6 @@ public class ProductSizesController
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
-    public record ErrorResponse(String message) {}
 
     @ExceptionHandler(ProductNotFoundException.class)
     public ResponseEntity<ErrorResponse> handleProductNotFound(ProductNotFoundException ex)

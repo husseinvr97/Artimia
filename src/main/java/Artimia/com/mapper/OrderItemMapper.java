@@ -15,7 +15,7 @@ public class OrderItemMapper
             item.getQuantity(),
             item.getUnitPrice(),
             item.getProduct().getProductName(),
-            item.getSize().getSize().toString()
+            item.getSize().getSize().name() // this is for Enum size which exists in product sizes
         );
     }
 }

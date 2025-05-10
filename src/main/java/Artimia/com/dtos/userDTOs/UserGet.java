@@ -8,5 +8,6 @@ public record UserGet
     String lastName,
     String phoneNumber,
     String email,
-    LocalDateTime dateCreated
+    LocalDateTime dateCreated,
+    String role
 ) {}

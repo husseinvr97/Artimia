@@ -15,16 +15,13 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository
-public interface OrdersRepository extends JpaRepository<Orders, Long> {
+public interface OrdersRepository extends JpaRepository<Orders, Long> 
+{
 
-    // Basic query methods
     List<Orders> findByUser(Users user);
     List<Orders> findByOrderStatus(OrderStatus orderStatus);
-    
-    // Date range queries
     List<Orders> findByOrderDateBetween(LocalDateTime startDate, LocalDateTime endDate);
     
-    // Payment method filtering
     List<Orders> findByPaymentMethod(PaymentMethod method);
     
     // Custom query for total amount range
@@ -34,8 +31,7 @@ public interface OrdersRepository extends JpaRepository<Orders, Long> {
     // Optimized status update
     @Modifying
     @Query("UPDATE Orders o SET o.orderStatus = :status WHERE o.orderID = :orderID")
-    int updateOrderStatus(@Param("orderID") Long orderId, 
-                        @Param("orderStatus") OrderStatus newStatus);
+    int updateOrderStatus(@Param("orderID") Long orderId, @Param("orderStatus") OrderStatus newStatus);
 
     // Complex search combining multiple fields
     @Query("SELECT o FROM Orders o WHERE " +
@@ -50,11 +46,4 @@ public interface OrdersRepository extends JpaRepository<Orders, Long> {
         @Param("maxDate") LocalDateTime maxDate
     );
 
-    @Query(value = """
-    SELECT DATE_FORMAT(order_date, '%Y-%m') AS month, 
-           SUM(total_amount) AS total 
-    FROM orders 
-    GROUP BY DATE_FORMAT(order_date, '%Y-%m')""", 
-    nativeQuery = true)
-List<Object[]> getMonthlySalesReport();
 }

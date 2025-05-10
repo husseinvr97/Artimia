@@ -10,12 +10,12 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface OrderItemsRepository extends JpaRepository<OrderItems, Long> {
+public interface OrderItemsRepository extends JpaRepository<OrderItems, Long> 
+{
 
     List<OrderItems> findByOrderOrderID(Long orderId);
     
-    @Query("SELECT oi FROM OrderItems oi WHERE oi.product.productId = :productId")
-    List<OrderItems> findByProductId(@Param("productId") Long productId);
+    List<OrderItems> findByProductId(Long productId);
 
     @Modifying 
     @Query("UPDATE OrderItems oi SET oi.quantity = oi.quantity + :adjustment WHERE oi.orderItemId = :id")

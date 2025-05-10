@@ -17,7 +17,10 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Index;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -36,25 +39,32 @@ public class Orders
     @Column(name = "order_id", updatable = false)
     private Long orderID;
 
+    @NotNull
     @ManyToOne
     @JoinColumn(name = "user_id")
     private Users user; 
 
+    @NotNull
     @CreationTimestamp
     @Column(name = "order_date", updatable = false)
     private LocalDateTime orderDate;
 
+    @NotNull
+    @Positive(message = "Total amount must be positive")
     @Column(name = "total_amount",precision = 10,scale = 2, nullable = false) // precision checks are at the DTO remove them and add them there
     private BigDecimal totalAmount;
  
+    @NotNull
     @Enumerated(EnumType.STRING)
     @Column(name = "status")
     private OrderStatus orderStatus = OrderStatus.PENDING;
 
-    @Column(name = "shipping_address",columnDefinition = "TEXT",nullable = false)
-    private String shippingAddress;
+    @NotNull(message = "user address cannot be null")
+    @OneToOne
+    @JoinColumn(name = "user_address_id",referencedColumnName = "address_id")
+    private UserAddress userAddress;
 
-    
+    @NotNull
     @Enumerated(EnumType.STRING)
     @Column(name = "payment_method",nullable = false)
     private PaymentMethod paymentMethod;

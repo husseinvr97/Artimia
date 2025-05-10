@@ -72,6 +72,12 @@ public class UsersController
         return userRepository.findById(userId).map(user -> ResponseEntity.ok(mapToDto(user))).orElseThrow(()->new ResourceNotFoundException("User Not Found"));
     }
 
+    @GetMapping("/email/{userEmail}")
+    public ResponseEntity<UserGet> getUserByEmail(@PathVariable String userEmail) throws ResourceNotFoundException
+    {
+        return userRepository.findByEmail(userEmail).map(user -> ResponseEntity.ok(mapToDto(user))).orElseThrow(()->new ResourceNotFoundException("User Not Found"));
+    }
+
     @PutMapping("/{userId}")
     public ResponseEntity<UserGet> updateUser(@PathVariable Long userId,@Valid @RequestBody UserCreate request) 
     {
@@ -136,7 +142,8 @@ public class UsersController
             user.getLastName(),
             user.getPhoneNumber(),
             user.getEmail(),
-            user.getDateCreated()
+            user.getDateCreated(),
+            user.getRole().name()
         );
     }
 

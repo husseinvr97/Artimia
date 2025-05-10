@@ -43,6 +43,7 @@ public class SecurityConfig
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers(HttpMethod.POST, "/api/users").permitAll()
                 .requestMatchers(HttpMethod.POST,"/api/auth/login").permitAll()
+                .requestMatchers(HttpMethod.GET,"/api/products/image/**").permitAll()
                 .anyRequest().authenticated() // Require auth for all other requests
             )
             .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
