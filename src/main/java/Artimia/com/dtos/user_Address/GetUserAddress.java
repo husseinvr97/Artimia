@@ -5,6 +5,5 @@ public record GetUserAddress(
     Long userId,
     String addressLine1,
     String city,
-    String state,
-    String postalCode
+    String state
 ) {}

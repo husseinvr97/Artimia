@@ -7,8 +7,11 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -24,34 +27,33 @@ public class UserAddress
     @Column(name = "address_id", updatable = false)
     private Long addressId;
 
+    @NotNull(message = "The user Id cannot be null")
     @Getter
     @Setter
-    @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false, updatable = false)
+    @OneToOne
+    @JoinColumn(name = "user_id", updatable = false)
     private Users user;
 
+    @NotBlank(message = "the address line cannot be null")
     @Getter
     @Setter
     @NotBlank(message = "Address line 1 is required")
-    @Column(name = "address_line1", nullable = false, length = 255)
+    @Size(message = "the address line must be between 25 and 255 characters",min = 25,max = 255)
+    @Column(name = "address_line1")
     private String addressLine1;
 
+    @NotNull(message = "the governorate cannot be null")
     @Getter
     @Setter
     @ManyToOne
-    @JoinColumn(name = "governorate_id",nullable = false)
+    @JoinColumn(name = "governorate_id")
     private Governorate governorate;
 
+    @NotNull(message = "the city cannot be null")
     @Getter
     @Setter
     @ManyToOne
-    @JoinColumn(name = "city_id",nullable = false)
+    @JoinColumn(name = "city_id")
     private City city;
-
-    @Getter
-    @Setter
-    @NotBlank(message = "Postal code is required")
-    @Column(name = "postal_code", nullable = false, length = 20)
-    private String postalCode;
     
 }

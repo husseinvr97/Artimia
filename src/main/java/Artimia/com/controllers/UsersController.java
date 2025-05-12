@@ -2,6 +2,7 @@ package Artimia.com.controllers;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,6 +23,7 @@ import Artimia.com.exceptions.WeakPasswordException;
 import Artimia.com.exceptions.WhiteSpaceException;
 import Artimia.com.repositories.UserRepository;
 import Artimia.com.services.UserServices;
+import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
@@ -163,6 +165,11 @@ public class UsersController
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(WeakPasswordException.class)
     public ErrorResponse handleWeakPassword(WeakPasswordException ex) 
+    {
+        return new ErrorResponse(ex.getMessage());
+    }
+    @ExceptionHandler({MethodArgumentNotValidException.class,ConstraintViolationException.class})
+    public ErrorResponse handleInternalServerError(RuntimeException ex)
     {
         return new ErrorResponse(ex.getMessage());
     }

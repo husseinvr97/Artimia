@@ -1,6 +1,5 @@
 package Artimia.com.services;
 
-import Artimia.com.dtos.user_Address.CreateUserAddress;
 import Artimia.com.dtos.user_Address.GetUserAddress;
 import Artimia.com.dtos.user_Address.UpdateUserAddress;
 import Artimia.com.entities.City;
@@ -20,6 +19,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 import java.io.FileReader;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -27,36 +27,22 @@ public class UserAddressesServices
 {
     private final UserAddressRepository userAddressRepository;
     private final UserRepository userRepository;
-    private final CityRepository cityRepository;
     private final GovernorateRepository governorateRepository;
+    private final CityRepository cityRepository;
 
-    @Transactional
-    public GetUserAddress createUserAddress(CreateUserAddress dto) 
-    {
-        Users user = userRepository.findById(dto.userId())
-                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
-        
-        Governorate governorate = governorateRepository.findByNameEn(dto.state())
-                .orElseThrow(() -> new ResourceNotFoundException("State not found"));
-        
-        City city = cityRepository.findByNameEn(dto.city())
-                .orElseThrow(() -> new ResourceNotFoundException("City not found"));
-
-        UserAddress address = new UserAddress();
-        address.setUser(user);
-        address.setAddressLine1(dto.addressLine1());
-        address.setGovernorate(governorate);
-        address.setCity(city);
-        address.setPostalCode(dto.postalCode());
-
-        UserAddress savedAddress = userAddressRepository.save(address);
-        return convertToGetDTO(savedAddress);
-    }
 
     public GetUserAddress getUserAddressesByUserId(Long userId)
     {
         Users user = userRepository.findById(userId).orElseThrow(()-> new ResourceNotFoundException("User not found"));
         return convertToGetDTO(userAddressRepository.findByUser(user));
+    }
+
+    public List<GetUserAddress> getAllByGovName(String govName)
+    {
+        List<GetUserAddress> allByGov = userAddressRepository.findAllByGovernorateNameEn(govName).orElseThrow(()-> new ResourceNotFoundException("nothing is found by" + govName)).stream().map(this::convertToGetDTO).toList();
+        if(allByGov.isEmpty())
+            throw new ResourceNotFoundException("Nothing is found by " + govName);
+        return allByGov;
     }
 
     @Transactional
@@ -65,7 +51,8 @@ public class UserAddressesServices
         UserAddress address = userAddressRepository.findById(addressId).orElseThrow(() -> new ResourceNotFoundException("Address not found"));
 
         address.setAddressLine1(dto.addressLine1());
-        address.setPostalCode(dto.postalCode());
+        address.setCity(cityRepository.findByNameEn(dto.city()).orElseThrow(()-> new ResourceNotFoundException("City not found")));
+        address.setGovernorate(governorateRepository.findByNameEn(dto.state()).orElseThrow(()-> new ResourceNotFoundException("governorate not found")));
 
         return convertToGetDTO(userAddressRepository.save(address));
     }
@@ -123,8 +110,7 @@ public class UserAddressesServices
                 address.getUser().getUserId(),
                 address.getAddressLine1(),
                 address.getCity().getNameEn(),
-                address.getGovernorate().getNameEn(),
-                address.getPostalCode() 
+                address.getGovernorate().getNameEn()
         );
     }
 }

@@ -15,9 +15,7 @@ public class OrderMapper
             order.getOrderStatus(),
             order.getUserAddress().getAddressLine1(),
             order.getUserAddress().getGovernorate().getNameEn(),
-            order.getUserAddress().getCity().getNameEn(),
-            order.getUserAddress().getPostalCode(),
-            order.getPaymentMethod()
+            order.getUserAddress().getCity().getNameEn()
         ); 
     }
 }

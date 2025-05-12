@@ -1,15 +1,20 @@
-// ProductSizesService.java
 package Artimia.com.services;
 
 import Artimia.com.dtos.productsizesDTOs.ProductSizesCreate;
 import Artimia.com.dtos.productsizesDTOs.ProductSizesGet;
+import Artimia.com.dtos.productsizesDTOs.UpdateProductSizes;
 import Artimia.com.entities.Products;
 import Artimia.com.entities.ProductSizes;
-import Artimia.com.exceptions.DuplicateProductSizeException;
-import Artimia.com.exceptions.ProductNotFoundException;
+import Artimia.com.exceptions.DuplicateResourceException;
+import Artimia.com.exceptions.ResourceNotFoundException;
+import Artimia.com.mapper.ProductSizesMapper;
 import Artimia.com.repositories.ProductSizesRepository;
 import Artimia.com.repositories.ProductsRepository;
 import lombok.RequiredArgsConstructor;
+
+import java.util.List;
+
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,13 +27,16 @@ public class ProductSizesServices
     private final ProductsRepository productsRepository;
 
     @Transactional
-    public ProductSizesGet createProductSize(ProductSizesCreate dto) {
-        Products product = productsRepository.findById(dto.productId())
-            .orElseThrow(() -> new ProductNotFoundException("Product not found with ID: " + dto.productId()));
+    public HttpStatus createProductSize(ProductSizesCreate dto) 
+    {
+        Products product = productsRepository.findByProductName(dto.productName())
+            .orElseThrow(() -> new ResourceNotFoundException("Product not found with name: " + dto.productName()));
 
-        if (productSizesRepository.existsByProductAndSize(product, dto.size())) {
-            throw new DuplicateProductSizeException("Size " + dto.size() + " already exists for product ID " + dto.productId());
-        }
+        if (productSizesRepository.existsByProductAndSize(product, dto.size())) 
+            throw new DuplicateResourceException("Size " + dto.size() + " already exists for product name " + dto.productName());
+        
+        if(productSizesRepository.existsByLengthAndWidth(dto.length(),dto.width()))
+            throw new DuplicateResourceException("length" + dto.length() + " already exists for width " + dto.width());
 
         ProductSizes productSize = new ProductSizes();
         productSize.setProduct(product);
@@ -38,19 +46,30 @@ public class ProductSizesServices
         productSize.setQuantity(dto.quantity());
         productSize.setAdditionalPrice(dto.additionalPrice());
 
-        ProductSizes savedSize = productSizesRepository.save(productSize);
-        return convertToGetDTO(savedSize);
+        productSizesRepository.save(productSize);
+        return HttpStatus.CREATED;
     }
 
-    private ProductSizesGet convertToGetDTO(ProductSizes productSize) {
-        return new ProductSizesGet(
-            productSize.getSizeId(),
-            productSize.getProduct().getProductId(),
-            productSize.getSize(),
-            productSize.getLength(),
-            productSize.getWidth(),
-            productSize.getQuantity(),
-            productSize.getAdditionalPrice()
-        );
+    public List<ProductSizesGet> getAllByProductId(Long Id)
+    {
+       List<ProductSizesGet> sizes = productSizesRepository.findAllByProductId(Id).orElseThrow(()-> new ResourceNotFoundException("No Sizes Found")).stream().map(ProductSizesMapper::convertToGetDTO).toList();
+       return sizes;
     }
+
+    public HttpStatus update(UpdateProductSizes updateProductSizes,Long Id)
+    {
+        if(!productSizesRepository.existsById(Id))
+            throw new ResourceNotFoundException("Size is not found");
+        productSizesRepository.update(Id,updateProductSizes.size(),updateProductSizes.length(),updateProductSizes.width(),updateProductSizes.quantity(),updateProductSizes.additionalPrice());
+        return HttpStatus.OK;
+    }
+
+    public HttpStatus deleteById(long Id)
+    {
+        if(!productSizesRepository.existsById(Id))
+            throw new ResourceNotFoundException("Size is not found");
+        productSizesRepository.deleteById(Id);
+        return HttpStatus.NO_CONTENT;
+    }
+
 }

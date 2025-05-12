@@ -5,8 +5,6 @@ import org.springframework.security.authentication.BadCredentialsException;
 import Artimia.com.dtos.errorresponse.ErrorResponse;
 import Artimia.com.entities.CustomUserDetails;
 import Artimia.com.services.TokenServices;
-import jakarta.servlet.http.HttpServletResponse;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.http.HttpStatus;
@@ -30,22 +28,12 @@ public class AuthController
     private final TokenServices tokenServices;
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody @Valid LoginRequest request, HttpServletResponse response) 
+    public ResponseEntity<AuthResponse> login(@RequestBody LoginRequest request) throws BadCredentialsException
     {
-        try 
-        {
-            Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.email(),request.password()));
-        
-            CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
-            String token = tokenServices.generateToken(userDetails);
-
-            return ResponseEntity.ok().body(new AuthResponse("Login successful", token));
-        } 
-        catch (BadCredentialsException e)
-        {
-            throw new BadCredentialsException("Invalid email or password");
-        }
-}
+        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.email(),request.password()));
+        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+        return new ResponseEntity<>(new AuthResponse("login successful",new String(tokenServices.generateToken(userDetails))),HttpStatus.OK);
+    }
 
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     @ExceptionHandler(BadCredentialsException.class)

@@ -6,26 +6,28 @@ import Artimia.com.dtos.order_items.GetOrderItem;
 import Artimia.com.dtos.order_items.UpdateOrderItem;
 import Artimia.com.exceptions.ResourceNotFoundException;
 import Artimia.com.services.OrderItemService;
+import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
  
 import java.util.List;
 
+@Validated
 @RestController
 @RequestMapping("/api/order-items")
 @RequiredArgsConstructor
@@ -35,39 +37,27 @@ public class OrderItemController
     private final OrderItemService orderItemService;
 
     @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<GetOrderItem> createOrderItem( @RequestBody CreateOrderItem dto) 
+    public ResponseEntity<GetOrderItem> createOrderItem( @RequestBody @Valid CreateOrderItem dto) throws ResourceNotFoundException
     {
-        return ResponseEntity.ok().body(orderItemService.createOrderItem(dto));
+        return new ResponseEntity<>(orderItemService.createOrderItem(dto),HttpStatus.CREATED);
     }
 
     @GetMapping("/order/{orderId}")
-    @ResponseStatus(HttpStatus.FOUND)
-    public List<GetOrderItem> getOrderItemsByOrder(@PathVariable Long orderId) 
+    public ResponseEntity<List<GetOrderItem>> getOrderItemsByOrder(@PathVariable Long orderId) 
     {
-        return orderItemService.getAllByOrderId(orderId);
+        return new ResponseEntity<>(orderItemService.getAllByOrderId(orderId),HttpStatus.FOUND);
     }
  
     @GetMapping("/{itemId}")
-    public GetOrderItem getOrderItem(@PathVariable Long itemId) 
+    public ResponseEntity<GetOrderItem> getOrderItem(@PathVariable Long itemId) 
     {
-        return orderItemService.getOrderItemById(itemId);
+        return new ResponseEntity<>(orderItemService.getOrderItemById(itemId),HttpStatus.FOUND);
     }
 
-    @PutMapping("/{itemId}")
-    public GetOrderItem updateOrderItem
-    (
-        @PathVariable Long itemId,
-        @Valid @RequestBody UpdateOrderItem dto
-    ) {
-        return orderItemService.updateOrderItem(itemId, dto);
-    }
-
-    @PatchMapping("/{itemId}/adjust-quantity")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void adjustQuantity(@PathVariable Long itemId,@RequestParam int adjustment) 
+    @PatchMapping("/{itemId}")
+    public ResponseEntity<Integer> updateOrderItem(@PathVariable Long itemId, @RequestBody @Valid UpdateOrderItem dto) 
     {
-        orderItemService.adjustQuantity(itemId, adjustment);
+        return new ResponseEntity<>(orderItemService.updateOrderItem(itemId, dto),HttpStatus.OK);
     }
 
     @DeleteMapping("/{itemId}")
@@ -81,6 +71,18 @@ public class OrderItemController
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(ResourceNotFoundException.class)
     public ErrorResponse handleResourceNotFoundException(BadCredentialsException ex) 
+    {
+        return new ErrorResponse(ex.getMessage());
+    }
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ErrorResponse handleMethodArgumentNotValidException(MethodArgumentNotValidException ex)
+    {
+        return new ErrorResponse(ex.getMessage());
+    }
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(ConstraintViolationException.class)
+    public ErrorResponse handleMethodArgumentNotValidException(ConstraintViolationException ex)
     {
         return new ErrorResponse(ex.getMessage());
     }

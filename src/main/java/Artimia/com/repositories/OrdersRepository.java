@@ -3,7 +3,6 @@ package Artimia.com.repositories;
 import Artimia.com.entities.Orders;
 import Artimia.com.entities.Users;
 import Artimia.com.enums.OrderStatus;
-import Artimia.com.enums.PaymentMethod;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -21,8 +20,6 @@ public interface OrdersRepository extends JpaRepository<Orders, Long>
     List<Orders> findByUser(Users user);
     List<Orders> findByOrderStatus(OrderStatus orderStatus);
     List<Orders> findByOrderDateBetween(LocalDateTime startDate, LocalDateTime endDate);
-    
-    List<Orders> findByPaymentMethod(PaymentMethod method);
     
     // Custom query for total amount range
     @Query("SELECT o FROM Orders o WHERE o.totalAmount BETWEEN :min AND :max")

@@ -6,6 +6,5 @@ public record UpdateDTO(
         OrderStatus status,
         String addressLine1,
         String governorateName,
-        String cityName,
-        String postalCode
+        String cityName
 ) {}

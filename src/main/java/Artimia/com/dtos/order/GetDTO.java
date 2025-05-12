@@ -4,7 +4,6 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 import Artimia.com.enums.OrderStatus;
-import Artimia.com.enums.PaymentMethod;
 
 public record GetDTO(
         Long orderId,
@@ -14,7 +13,5 @@ public record GetDTO(
         OrderStatus status,
         String addressLine1,
         String governorate,
-        String city,
-        String postalCode,
-        PaymentMethod paymentMethod
+        String city
 ) {}

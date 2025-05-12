@@ -8,6 +8,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 import jakarta.persistence.Id;
+import jakarta.persistence.Index;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Column;
 import jakarta.persistence.ManyToOne;
@@ -24,7 +25,12 @@ import java.math.BigDecimal;
     uniqueConstraints = @UniqueConstraint(
         columnNames = {"product_id","size"},
         name = "unique_product_size"
-    )
+    ),indexes = 
+    {
+        @Index(name = "length_index",columnList = "length"),
+        @Index(name = "width_index",columnList = "width"),
+        @Index(name = "size_index",columnList = "size")        
+    }
 )
 public class ProductSizes 
 {
@@ -39,23 +45,24 @@ public class ProductSizes
     private Products product;
 
     @Enumerated(EnumType.STRING)
-    @NotNull
-    @Column(nullable = false)
+    @NotNull(message = "The size of the product cannot be null")
+    @Column(name = "size")
     private Size size = Size.SMALL;
 
     @NotNull(message = "length cannot be null")
-    @Column(nullable = false, precision = 5, scale = 2)
+    @Column(name = "length", precision = 5, scale = 2)
     private BigDecimal length;
 
     @NotNull(message = "width cannot be null")
-    @Column(nullable = false, precision = 5, scale = 2)
+    @Column(name = "width", precision = 5, scale = 2)
     private BigDecimal width;
 
-    @Column(nullable = false, columnDefinition = "INT DEFAULT 0")
+    @NotNull(message = "quantity cannot be null")
+    @Column(name = "quantity", columnDefinition = "INT DEFAULT 0")
     private Integer quantity = 0;
 
-    @NotNull
-    @Column(name = "additional_price", nullable = false, precision = 10, scale = 2)
+    @NotNull(message = "additional price cannot be null")
+    @Column(name = "additional_price", precision = 10, scale = 2)
     private BigDecimal additionalPrice;
     
 }

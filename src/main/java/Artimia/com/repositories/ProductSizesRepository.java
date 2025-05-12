@@ -18,26 +18,32 @@ public interface ProductSizesRepository extends JpaRepository<ProductSizes, Long
 {
 
     List<ProductSizes> findByProduct(Products product);
-    Optional<ProductSizes> findByProductAndSize(Products product, Size size);
     
     @Query("SELECT ps FROM ProductSizes ps WHERE ps.product.productId = :productId")
     List<ProductSizes> findByProductId(@Param("productId") Long productId);
 
-    @Query("SELECT ps.quantity FROM ProductSizes ps WHERE ps.size = :size AND ps.product.productId = :productId")
-    Optional<Integer> findStockQuantity(@Param("productId") Long productId, @Param("size") Size size);
-
-    @Query("SELECT ps.additionalPrice FROM ProductSizes ps WHERE ps.product.productId = :productId AND ps.size = :size")
-    Optional<BigDecimal> findAdditionalPrice(@Param("productId") Long productId,@Param("size") Size size);
+    @Query("SELECT ps FROM ProductSizes ps JOIN FETCH ps.product WHERE ps.product.productId = :productId")
+    Optional<List<ProductSizes>> findAllByProductId(@Param("productId") Long productId);
 
     @Modifying
-    @Query("UPDATE ProductSizes ps SET ps.quantity = ps.quantity + :quantity WHERE ps.sizeId = :sizeId")
-    int updateStockQuantity(@Param("sizeId") Long sizeId,@Param("quantity") int quantity);
-
-    @Query("SELECT ps FROM ProductSizes ps JOIN FETCH ps.product WHERE ps.product.productId = :productId")
-    List<ProductSizes> findWithProductDetails(@Param("productId") Long productId);
+@Query("""
+    UPDATE ProductSizes p SET 
+        p.size = CASE WHEN :size IS NOT NULL THEN :size ELSE p.size END,
+        p.length = CASE WHEN :length IS NOT NULL AND :length > 0.00 THEN :length ELSE p.length END,
+        p.width = CASE WHEN :width IS NOT NULL AND :width > 0.00 THEN :width ELSE p.width END,
+        p.quantity = CASE WHEN :quantity IS NOT NULL AND :quantity > 0 THEN :quantity ELSE p.quantity END,
+        p.additionalPrice = CASE WHEN :additionalPrice IS NOT NULL AND :additionalPrice > 0.00 THEN :additionalPrice ELSE p.additionalPrice END
+    WHERE p.sizeId = :id
+""")
+void update(
+    @Param("id") Long id,
+    @Param("size") Size size,
+    @Param("length") BigDecimal length,
+    @Param("width") BigDecimal width,
+    @Param("quantity") Long quantity,
+    @Param("additionalPrice") BigDecimal additionalPrice
+);
 
     boolean existsByProductAndSize(Products product, Size size);
-
-    @Query("SELECT ps.length, ps.width FROM ProductSizes ps WHERE ps.product.productId = :productId AND ps.size = :size")
-    Optional<Object[]> findDimensions(@Param("productId") Long productId,@Param("size") Size size);
+    boolean existsByLengthAndWidth(BigDecimal length, BigDecimal width);
 }

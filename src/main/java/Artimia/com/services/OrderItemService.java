@@ -47,50 +47,39 @@ public class OrderItemService
         item.setSize(size);
         item.setQuantity(dto.quantity());
         item.setUnitPrice(dto.unitPrice());
-
+ 
         return OrderItemMapper.toGetDto(orderItemsRepository.save(item));
     }
 
     public List<GetOrderItem> getAllByOrderId(Long orderId) 
     {
-        return orderItemsRepository.findByOrderOrderID(orderId).stream()
-            .map(OrderItemMapper::toGetDto)
-            .toList();
+        return orderItemsRepository.findByOrderOrderID(orderId).stream().map(OrderItemMapper::toGetDto).toList();
     }
 
     public GetOrderItem getOrderItemById(Long itemId) 
     {
-        return orderItemsRepository.findById(itemId)
-            .map(OrderItemMapper::toGetDto)
-            .orElseThrow(() -> new ResourceNotFoundException("Order item not found"));
+        return orderItemsRepository.findById(itemId).map(OrderItemMapper::toGetDto)
+        .orElseThrow(() -> new ResourceNotFoundException("Order item not found"));
     }
 
     @Transactional
-    public GetOrderItem updateOrderItem(Long itemId, UpdateOrderItem dto) 
+    public int updateOrderItem(Long itemId, UpdateOrderItem dto) 
     {
-        OrderItems item = orderItemsRepository.findById(itemId)
-            .orElseThrow(() -> new ResourceNotFoundException("Order item not found"));
+          if(!orderItemsRepository.existsById(itemId))
+            throw new ResourceNotFoundException("Order item is not found");
 
-        if (dto.quantity() != null) 
+        int numberOfRowsEffected = 0;
+        if(!(dto.quantity() == 0))
         {
-            item.setQuantity(dto.quantity());
+            orderItemsRepository.setQuantity(itemId, dto.quantity());
+            ++numberOfRowsEffected;
         }
-        if (dto.unitPrice() != null) 
+        if(!(dto.unitPrice().doubleValue() == 0.00))
         {
-            item.setUnitPrice(dto.unitPrice());
+            orderItemsRepository.setUnitPrice(itemId,dto.unitPrice());
+            ++numberOfRowsEffected;
         }
-
-        return OrderItemMapper.toGetDto(orderItemsRepository.save(item));
-    }
-
-    @Transactional
-    public void adjustQuantity(Long itemId, int adjustment) 
-    {
-        int updatedRows = orderItemsRepository.adjustQuantity(itemId, adjustment);
-        if (updatedRows == 0) 
-        {
-            throw new ResourceNotFoundException("Order item not found");
-        }
+        return numberOfRowsEffected;
     }
 
     @Transactional

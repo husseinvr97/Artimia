@@ -1,5 +1,6 @@
 package Artimia.com.controllers;
 
+import Artimia.com.dtos.errorresponse.ErrorResponse;
 import Artimia.com.dtos.order.CreateDTO;
 import Artimia.com.dtos.order.GetDTO;
 import Artimia.com.dtos.order.SearchDTO;
@@ -8,9 +9,13 @@ import Artimia.com.exceptions.InvalidOrderException;
 import Artimia.com.exceptions.InvalidStatusTransitionException;
 import Artimia.com.exceptions.ResourceNotFoundException;
 import Artimia.com.services.OrderService;
+import jakarta.validation.ConstraintViolationException;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -22,52 +27,53 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+@Validated
 @RestController
 @RequestMapping("/api/orders")
 @RequiredArgsConstructor
 public class OrdersController 
 {
-
     private final OrderService orderService;
 
     @PostMapping
-    public ResponseEntity<GetDTO> createOrder(@RequestBody CreateDTO dto) 
+    public ResponseEntity<GetDTO> createOrder(@RequestBody @Valid CreateDTO dto) 
     {
-
-        return ResponseEntity.ok().body(orderService.createOrder(dto));
+        return new ResponseEntity<>(orderService.createOrder(dto),HttpStatus.CREATED);
     }
 
     @GetMapping("/{orderId}")
     public ResponseEntity<GetDTO> getOrderById(@PathVariable Long orderId) 
     {
-        return ResponseEntity.ok(orderService.getOrderById(orderId));
+        return new ResponseEntity<>(orderService.getOrderById(orderId),HttpStatus.FOUND);
     }
 
     @PostMapping("/search")
-    public ResponseEntity<List<GetDTO>> searchOrders(@RequestBody SearchDTO searchDto) {
-        return ResponseEntity.ok(orderService.searchOrders(searchDto));
+    public ResponseEntity<List<GetDTO>> searchOrders(@RequestBody SearchDTO searchDto) 
+    {
+        return new ResponseEntity<>(orderService.searchOrders(searchDto),HttpStatus.FOUND);
     }
 
     @PutMapping("/{orderId}")
-    public ResponseEntity<GetDTO> updateOrder(
-            @PathVariable Long orderId,
-            @RequestBody UpdateDTO dto
-    ) {
-        return ResponseEntity.ok(orderService.updateOrder(orderId, dto));
+    public ResponseEntity<GetDTO> updateOrder(@PathVariable Long orderId,@RequestBody UpdateDTO dto) 
+    {
+        return new ResponseEntity<>(orderService.updateOrder(orderId, dto),HttpStatus.OK);
     }
 
     @ExceptionHandler(ResourceNotFoundException.class)
-    public ResponseEntity<String> handleResourceNotFound(ResourceNotFoundException ex) 
+    public ResponseEntity<ErrorResponse> handleResourceNotFound(ResourceNotFoundException ex) 
     {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
+        return new ResponseEntity<>(new ErrorResponse(ex.getMessage()),HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler({
-            InvalidOrderException.class,
-            InvalidStatusTransitionException.class
-    })
-    public ResponseEntity<String> handleBadRequestExceptions(RuntimeException ex) 
+    @ExceptionHandler({InvalidOrderException.class,InvalidStatusTransitionException.class})
+    public ResponseEntity<ErrorResponse> handleBadRequestExceptions(RuntimeException ex) 
     {
-        return ResponseEntity.badRequest().body(ex.getMessage());
+        return new ResponseEntity<>(new ErrorResponse(ex.getMessage()),HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler({MethodArgumentNotValidException.class,ConstraintViolationException.class})
+    public ResponseEntity<ErrorResponse> handleConstraintValidationsExceptions(RuntimeException ex)
+    {
+        return new ResponseEntity<>(new ErrorResponse(ex.getMessage()),HttpStatus.BAD_REQUEST);
     }
 }

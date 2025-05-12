@@ -2,10 +2,10 @@ package Artimia.com.entities;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 
 import org.hibernate.annotations.CreationTimestamp;
 
-import Artimia.com.enums.PaymentMethod;
 import Artimia.com.enums.OrderStatus;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -17,10 +17,10 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Index;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -33,28 +33,29 @@ import lombok.Setter;
 })
 public class Orders 
 {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "order_id", updatable = false)
     private Long orderID;
 
-    @NotNull
+    @NotNull(message = "The user Id cannot be null")
     @ManyToOne
     @JoinColumn(name = "user_id")
     private Users user; 
 
-    @NotNull
+    @NotNull(message = "The order date cannot be null")
     @CreationTimestamp
     @Column(name = "order_date", updatable = false)
     private LocalDateTime orderDate;
 
-    @NotNull
-    @Positive(message = "Total amount must be positive")
-    @Column(name = "total_amount",precision = 10,scale = 2, nullable = false) // precision checks are at the DTO remove them and add them there
+    @NotNull(message = "The order item id cannot be null")
+    @OneToMany(mappedBy = "order") 
+    private List<OrderItems> orderItems;
+
+    @NotNull(message = "the total amount cannot be null")
+    @Column(name = "total_amount",precision = 10,scale = 2)
     private BigDecimal totalAmount;
  
-    @NotNull
     @Enumerated(EnumType.STRING)
     @Column(name = "status")
     private OrderStatus orderStatus = OrderStatus.PENDING;
@@ -63,9 +64,4 @@ public class Orders
     @OneToOne
     @JoinColumn(name = "user_address_id",referencedColumnName = "address_id")
     private UserAddress userAddress;
-
-    @NotNull
-    @Enumerated(EnumType.STRING)
-    @Column(name = "payment_method",nullable = false)
-    private PaymentMethod paymentMethod;
 }
