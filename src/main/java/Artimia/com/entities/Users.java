@@ -26,10 +26,9 @@ import jakarta.persistence.Column;
 @Getter
 @Setter
 @Entity
-@Table(name = "users",indexes = {@Index(name = "phone_number_index",columnList = "phone_number"),
-                                @Index(name = "email_index",columnList = "email")})
-public class Users 
-{
+@Table(name = "users", indexes = { @Index(name = "phone_number_index", columnList = "phone_number"),
+        @Index(name = "email_index", columnList = "email") })
+public class Users {
 
     @Column(name = "first_name")
     @NotBlank(message = "First name is required")
@@ -43,25 +42,20 @@ public class Users
     @Pattern(regexp = "^[\\p{L} '-]+$", message = "Invalid characters")
     private String lastName;
 
-    
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id", updatable = false)
     private Long userId;
 
-    @Column(name = "email" , length = 100)
-    @Size(min = 30 , max = 100 , message = "email must be between 30 and 100 characters")
-    @NotBlank(message = "The email must not be empty")
-    @Email
+    @Column(name = "email", length = 100)
+    @Email(message = "Invalid email")
     private String email;
-    
+
     @Column(name = "phone_number")
-    @Pattern(regexp = "^\\d{11}$")
     @NotBlank(message = "The phone number must not be empty")
     private String phoneNumber;
 
-    @Column(name="password_hash", length = 100)
-    @Size(min = 10 , max = 30,message = "The password must be between 10 and 30 characters")
+    @Column(name = "password_hash")
     private String passwordHash;
 
     @CreationTimestamp
@@ -72,5 +66,5 @@ public class Users
     @NotNull(message = "the role of the user cannot be null")
     @Column(name = "role")
     private Role role = Role.USER;
-    
+
 }

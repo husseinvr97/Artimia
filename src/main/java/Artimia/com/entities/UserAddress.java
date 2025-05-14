@@ -15,11 +15,9 @@ import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 
-
 @Entity
 @Table(name = "user_addresses")
-public class UserAddress 
-{
+public class UserAddress {
 
     @Getter
     @Id
@@ -38,7 +36,7 @@ public class UserAddress
     @Getter
     @Setter
     @NotBlank(message = "Address line 1 is required")
-    @Size(message = "the address line must be between 25 and 255 characters",min = 25,max = 255)
+    @Size(message = "the address line must be between 8 and 25 characters", min = 8, max = 25)
     @Column(name = "address_line1")
     private String addressLine1;
 
@@ -55,5 +53,5 @@ public class UserAddress
     @ManyToOne
     @JoinColumn(name = "city_id")
     private City city;
-    
+
 }

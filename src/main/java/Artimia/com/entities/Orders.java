@@ -27,41 +27,38 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(name = "orders",indexes = {
-    @Index(name = "order_status_index", columnList = "status"),
-    @Index(name = "order_date_index",columnList = "order_date")
+@Table(name = "orders", indexes = {
+        @Index(name = "order_status_index", columnList = "status"),
+        @Index(name = "order_date_index", columnList = "order_date")
 })
-public class Orders 
-{
+public class Orders {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "order_id", updatable = false)
+    @Column(name = "order_id")
     private Long orderID;
 
     @NotNull(message = "The user Id cannot be null")
     @ManyToOne
     @JoinColumn(name = "user_id")
-    private Users user; 
+    private Users user;
 
-    @NotNull(message = "The order date cannot be null")
     @CreationTimestamp
-    @Column(name = "order_date", updatable = false)
+    @Column(name = "order_date")
     private LocalDateTime orderDate;
 
-    @NotNull(message = "The order item id cannot be null")
-    @OneToMany(mappedBy = "order") 
+    @OneToMany(mappedBy = "order")
     private List<OrderItems> orderItems;
 
     @NotNull(message = "the total amount cannot be null")
-    @Column(name = "total_amount",precision = 10,scale = 2)
+    @Column(name = "total_amount", precision = 10, scale = 2)
     private BigDecimal totalAmount;
- 
+
     @Enumerated(EnumType.STRING)
     @Column(name = "status")
     private OrderStatus orderStatus = OrderStatus.PENDING;
 
     @NotNull(message = "user address cannot be null")
     @OneToOne
-    @JoinColumn(name = "user_address_id",referencedColumnName = "address_id")
+    @JoinColumn(name = "user_address_id", referencedColumnName = "address_id")
     private UserAddress userAddress;
 }

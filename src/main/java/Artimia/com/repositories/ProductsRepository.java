@@ -17,23 +17,30 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface ProductsRepository extends JpaRepository<Products, Long> 
-{
-
+public interface ProductsRepository extends JpaRepository<Products, Long> {
 
     Optional<Products> findByProductName(String productName);
+
     Page<Products> findByStyle(Style style, Pageable pageable);
+
     boolean existsByProductName(String productName);
-    
+
+    @Modifying
+    @Query("UPDATE Products oi SET oi.quantity = :newQuantity WHERE oi.productId = :id")
+    int setQuantity(@Param("id") Long itemId, @Param("newQuantity") Long newQuantity);
+
+    @Modifying
+    @Query("UPDATE Products p SET p.quantity = p.quantity - 1 WHERE p.productId = :id")
+    void decrementProductQuantity(@Param("id") Long id);
+
     @Query("SELECT p FROM Products p WHERE " +
-           "(:style IS NULL OR p.style = :style) AND " +
-           "(p.Price BETWEEN :minPrice AND :maxPrice)")
+            "(:style IS NULL OR p.style = :style) AND " +
+            "(p.Price BETWEEN :minPrice AND :maxPrice)")
     Page<Products> searchProducts(
-        Style style,
-        BigDecimal minPrice,
-        BigDecimal maxPrice,
-        Pageable pageable
-    );
+            Style style,
+            BigDecimal minPrice,
+            BigDecimal maxPrice,
+            Pageable pageable);
 
     @Query("SELECT p FROM Products p JOIN FETCH p.sizes WHERE p.productId = :id")
     Optional<Products> findByIdWithSizes(Long id);
@@ -44,20 +51,20 @@ public interface ProductsRepository extends JpaRepository<Products, Long>
 
     @Modifying
     @Query("UPDATE Products p SET p.productName = productName WHERE p.productId = :id")
-    void updateProductName(@Param("productName") String productName , @Param("id") Long id);
+    void updateProductName(@Param("productName") String productName, @Param("id") Long id);
 
     @Modifying
     @Query("UPDATE Products p SET p.Price = Price WHERE p.productId = :id")
-    void updateProductPrice(@Param("Price") BigDecimal Price , @Param("id") Long id);
+    void updateProductPrice(@Param("Price") BigDecimal Price, @Param("id") Long id);
 
     @Modifying
     @Transactional
     @Query("UPDATE Products p SET p.description = :description WHERE p.productId = :id")
-    void updateProductDescription(@Param("description") String description , @Param("id") Long id);
+    void updateProductDescription(@Param("description") String description, @Param("id") Long id);
 
     @Modifying
     @Query("UPDATE Products p SET p.style = style WHERE p.productId = :id")
-    void updateProductStyle(@Param("style") Style style , @Param("id") Long id);
+    void updateProductStyle(@Param("style") Style style, @Param("id") Long id);
 
     List<Products> findTop10ByOrderByTimesBoughtDesc();
 }

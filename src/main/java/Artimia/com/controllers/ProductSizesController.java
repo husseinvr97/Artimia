@@ -33,49 +33,47 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/product-sizes")
 @RequiredArgsConstructor
-public class ProductSizesController 
-{
+public class ProductSizesController {
 
     private final ProductSizesServices productSizesService;
 
     @PostMapping
-    public ResponseEntity<HttpStatus> createProductSize(@RequestBody @Valid ProductSizesCreate productSizesCreate) throws MethodArgumentNotValidException , ConstraintViolationException , DuplicateResourceException , ResourceNotFoundException
-    {
+    public ResponseEntity<HttpStatus> createProductSize(@RequestBody @Valid ProductSizesCreate productSizesCreate)
+            throws MethodArgumentNotValidException, ConstraintViolationException, DuplicateResourceException,
+            ResourceNotFoundException {
         return new ResponseEntity<>(productSizesService.createProductSize(productSizesCreate));
     }
+
     @GetMapping("/{productId}")
-    public ResponseEntity<List<ProductSizesGet>> getAllById(@PathVariable Long Id) throws MethodArgumentNotValidException , ConstraintViolationException , ResourceNotFoundException
-    {
-        return new ResponseEntity<>(productSizesService.getAllByProductId(Id),HttpStatus.OK);
+    public ResponseEntity<List<ProductSizesGet>> getAllById(@PathVariable Long productId)
+            throws MethodArgumentNotValidException, ConstraintViolationException, ResourceNotFoundException {
+        return new ResponseEntity<>(productSizesService.getAllByProductId(productId), HttpStatus.OK);
     }
 
     @PutMapping("/{sizeId}")
-    public ResponseEntity<HttpStatus> update(@RequestBody UpdateProductSizes updateProductSizes,@PathVariable Long Id) throws ResourceNotFoundException
-    {
-        return new ResponseEntity<>(productSizesService.update(updateProductSizes,Id));
+    public ResponseEntity<HttpStatus> update(@RequestBody UpdateProductSizes updateProductSizes, @PathVariable Long Id)
+            throws ResourceNotFoundException {
+        return new ResponseEntity<>(productSizesService.update(updateProductSizes, Id));
     }
 
     @DeleteMapping("/{sizeId}")
-    public ResponseEntity<HttpStatus> deleteById(@PathVariable Long Id) throws ResourceNotFoundException
-    {
+    public ResponseEntity<HttpStatus> deleteById(@PathVariable Long Id) throws ResourceNotFoundException {
         return new ResponseEntity<>(productSizesService.deleteById(Id));
     }
 
     @ExceptionHandler(ProductNotFoundException.class)
-    public ResponseEntity<ErrorResponse> handleProductNotFound(ResourceNotFoundException ex)
-    {
+    public ResponseEntity<ErrorResponse> handleProductNotFound(ResourceNotFoundException ex) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse(ex.getMessage()));
     }
 
     @ExceptionHandler(DuplicateResourceException.class)
-    public ResponseEntity<ErrorResponse> handleDuplicateProductSize(DuplicateProductSizeException ex) 
-    {
+    public ResponseEntity<ErrorResponse> handleDuplicateProductSize(DuplicateProductSizeException ex) {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(new ErrorResponse(ex.getMessage()));
     }
 
-    @ExceptionHandler({MethodArgumentNotValidException.class , ConstraintViolationException.class})
-    public ResponseEntity<ErrorResponse> handleGenericException(Exception ex) 
-    {
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorResponse("An unexpected error occurred"));
+    @ExceptionHandler({ MethodArgumentNotValidException.class, ConstraintViolationException.class })
+    public ResponseEntity<ErrorResponse> handleGenericException(Exception ex) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(new ErrorResponse("An unexpected error occurred"));
     }
 }
