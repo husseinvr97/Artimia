@@ -61,7 +61,7 @@ public class ProductSizesController {
         return new ResponseEntity<>(productSizesService.deleteById(Id));
     }
 
-    @ExceptionHandler(ProductNotFoundException.class)
+    @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<ErrorResponse> handleProductNotFound(ResourceNotFoundException ex) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse(ex.getMessage()));
     }

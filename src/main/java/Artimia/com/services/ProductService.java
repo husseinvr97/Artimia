@@ -5,6 +5,7 @@ import Artimia.com.dtos.productsDTOs.ProductGet;
 import Artimia.com.dtos.productsDTOs.ProductUpdate;
 import Artimia.com.entities.Products;
 import Artimia.com.enums.Style;
+import Artimia.com.exceptions.DuplicateResourceException;
 import Artimia.com.exceptions.InvalidNameException;
 import Artimia.com.exceptions.NegativeOrZeroException;
 import Artimia.com.exceptions.ResourceNotFoundException;
@@ -32,6 +33,8 @@ public class ProductService {
     @Transactional
     public ProductGet createProduct(ProductCreate productCreate, MultipartFile image) throws IOException {
         Products product = new Products();
+        if (productsRepository.existsByProductName(productCreate.productName()))
+            throw new DuplicateResourceException("Product name already exists");
         product.setProductName(productCreate.productName());
         product.setPrice(productCreate.Price());
         product.setDescription(productCreate.description());

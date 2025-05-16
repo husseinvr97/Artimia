@@ -5,6 +5,7 @@ import Artimia.com.dtos.productsDTOs.ProductCreate;
 import Artimia.com.dtos.productsDTOs.ProductGet;
 import Artimia.com.dtos.productsDTOs.ProductUpdate;
 import Artimia.com.enums.Style;
+import Artimia.com.exceptions.DuplicateResourceException;
 import Artimia.com.exceptions.InvalidNameException;
 import Artimia.com.exceptions.NegativeOrZeroException;
 import Artimia.com.exceptions.ResourceNotFoundException;
@@ -71,8 +72,8 @@ public class ProductController {
         return new ResponseEntity<>(productService.getProductById(id), HttpStatus.FOUND);
     }
 
-    @GetMapping("/{product_name}")
-    public ResponseEntity<ProductGet> getProductById(@PathVariable String productName)
+    @GetMapping("/product/{product_name}")
+    public ResponseEntity<ProductGet> getProductByName(@PathVariable String productName)
             throws ResourceNotFoundException {
         return new ResponseEntity<>(productService.getProductByName(productName), HttpStatus.FOUND);
     }
@@ -89,7 +90,6 @@ public class ProductController {
     @GetMapping("/image/{imageName}")
     public ResponseEntity<Resource> getImageFile(@PathVariable String imageName) throws IOException {
         Path uploadsDir = Paths.get("D:/projects/Artimia/uploads").toAbsolutePath().normalize();
-
         Path imagePath = uploadsDir.resolve(imageName).normalize();
 
         if (!Files.exists(imagePath) || !imagePath.startsWith(uploadsDir)) {
@@ -113,12 +113,6 @@ public class ProductController {
         return new ResponseEntity<>(productService.getTopProducts(), HttpStatus.OK);
     }
 
-    @PatchMapping("/{id}/purchase")
-    public ResponseEntity<?> recordPurchase(@PathVariable Long id) {
-        productService.incrementTimesBought(id);
-        return new ResponseEntity<>(HttpStatus.OK);
-    }
-
     @PatchMapping("/{id}")
     public ResponseEntity<Integer> updateProduct(@RequestBody ProductUpdate productUpdate, @PathVariable Long id)
             throws ResourceNotFoundException, InvalidNameException, NegativeOrZeroException, StringLengthException {
@@ -134,6 +128,11 @@ public class ProductController {
     @ExceptionHandler(IOException.class)
     public ResponseEntity<ErrorResponse> handleIOException(IOException ex) {
         return new ResponseEntity<>(new ErrorResponse(ex.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @ExceptionHandler(DuplicateResourceException.class)
+    public ResponseEntity<ErrorResponse> handleResourceNotFoundException(DuplicateResourceException ex) {
+        return new ResponseEntity<>(new ErrorResponse(ex.getMessage()), HttpStatus.CONFLICT);
     }
 
     @ExceptionHandler({ ResourceNotFoundException.class, InvalidNameException.class, NegativeOrZeroException.class,

@@ -20,22 +20,22 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
-public class ProductSizesServices 
-{
+public class ProductSizesServices {
 
     private final ProductSizesRepository productSizesRepository;
     private final ProductsRepository productsRepository;
 
     @Transactional
-    public HttpStatus createProductSize(ProductSizesCreate dto) 
-    {
+    public HttpStatus createProductSize(ProductSizesCreate dto) {
         Products product = productsRepository.findByProductName(dto.productName())
-            .orElseThrow(() -> new ResourceNotFoundException("Product not found with name: " + dto.productName()));
+                .orElseThrow(() -> new ResourceNotFoundException("Product not found with name: " + dto.productName()));
 
-        if (productSizesRepository.existsByProductAndSize(product, dto.size())) 
-            throw new DuplicateResourceException("Size " + dto.size() + " already exists for product name " + dto.productName());
-        
-        if(productSizesRepository.existsByLengthAndWidth(dto.length(),dto.width()))
+        if (productSizesRepository.existsByProductAndSize(product, dto.size()))
+            throw new DuplicateResourceException(
+                    "Size " + dto.size() + " already exists for product name " + dto.productName());
+
+        if (productSizesRepository.existsByProductAndLengthAndWidthAndSize(product, dto.length(), dto.width(),
+                dto.size()))
             throw new DuplicateResourceException("length" + dto.length() + " already exists for width " + dto.width());
 
         ProductSizes productSize = new ProductSizes();
@@ -50,23 +50,23 @@ public class ProductSizesServices
         return HttpStatus.CREATED;
     }
 
-    public List<ProductSizesGet> getAllByProductId(Long Id)
-    {
-       List<ProductSizesGet> sizes = productSizesRepository.findAllByProductId(Id).orElseThrow(()-> new ResourceNotFoundException("No Sizes Found")).stream().map(ProductSizesMapper::convertToGetDTO).toList();
-       return sizes;
+    public List<ProductSizesGet> getAllByProductId(Long Id) {
+        List<ProductSizesGet> sizes = productSizesRepository.findAllByProductId(Id)
+                .orElseThrow(() -> new ResourceNotFoundException("No Sizes Found")).stream()
+                .map(ProductSizesMapper::convertToGetDTO).toList();
+        return sizes;
     }
 
-    public HttpStatus update(UpdateProductSizes updateProductSizes,Long Id)
-    {
-        if(!productSizesRepository.existsById(Id))
+    public HttpStatus update(UpdateProductSizes updateProductSizes, Long Id) {
+        if (!productSizesRepository.existsById(Id))
             throw new ResourceNotFoundException("Size is not found");
-        productSizesRepository.update(Id,updateProductSizes.size(),updateProductSizes.length(),updateProductSizes.width(),updateProductSizes.quantity(),updateProductSizes.additionalPrice());
+        productSizesRepository.update(Id, updateProductSizes.size(), updateProductSizes.length(),
+                updateProductSizes.width(), updateProductSizes.quantity(), updateProductSizes.additionalPrice());
         return HttpStatus.OK;
     }
 
-    public HttpStatus deleteById(long Id)
-    {
-        if(!productSizesRepository.existsById(Id))
+    public HttpStatus deleteById(long Id) {
+        if (!productSizesRepository.existsById(Id))
             throw new ResourceNotFoundException("Size is not found");
         productSizesRepository.deleteById(Id);
         return HttpStatus.NO_CONTENT;

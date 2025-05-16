@@ -14,11 +14,10 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface ProductSizesRepository extends JpaRepository<ProductSizes, Long> 
-{
+public interface ProductSizesRepository extends JpaRepository<ProductSizes, Long> {
 
     List<ProductSizes> findByProduct(Products product);
-    
+
     @Query("SELECT ps FROM ProductSizes ps WHERE ps.product.productId = :productId")
     List<ProductSizes> findByProductId(@Param("productId") Long productId);
 
@@ -26,24 +25,24 @@ public interface ProductSizesRepository extends JpaRepository<ProductSizes, Long
     Optional<List<ProductSizes>> findAllByProductId(@Param("productId") Long productId);
 
     @Modifying
-@Query("""
-    UPDATE ProductSizes p SET 
-        p.size = CASE WHEN :size IS NOT NULL THEN :size ELSE p.size END,
-        p.length = CASE WHEN :length IS NOT NULL AND :length > 0.00 THEN :length ELSE p.length END,
-        p.width = CASE WHEN :width IS NOT NULL AND :width > 0.00 THEN :width ELSE p.width END,
-        p.quantity = CASE WHEN :quantity IS NOT NULL AND :quantity > 0 THEN :quantity ELSE p.quantity END,
-        p.additionalPrice = CASE WHEN :additionalPrice IS NOT NULL AND :additionalPrice > 0.00 THEN :additionalPrice ELSE p.additionalPrice END
-    WHERE p.sizeId = :id
-""")
-void update(
-    @Param("id") Long id,
-    @Param("size") Size size,
-    @Param("length") BigDecimal length,
-    @Param("width") BigDecimal width,
-    @Param("quantity") Long quantity,
-    @Param("additionalPrice") BigDecimal additionalPrice
-);
+    @Query("""
+                UPDATE ProductSizes p SET
+                    p.size = CASE WHEN :size IS NOT NULL THEN :size ELSE p.size END,
+                    p.length = CASE WHEN :length IS NOT NULL AND :length > 0.00 THEN :length ELSE p.length END,
+                    p.width = CASE WHEN :width IS NOT NULL AND :width > 0.00 THEN :width ELSE p.width END,
+                    p.quantity = CASE WHEN :quantity IS NOT NULL AND :quantity > 0 THEN :quantity ELSE p.quantity END,
+                    p.additionalPrice = CASE WHEN :additionalPrice IS NOT NULL AND :additionalPrice > 0.00 THEN :additionalPrice ELSE p.additionalPrice END
+                WHERE p.sizeId = :id
+            """)
+    void update(
+            @Param("id") Long id,
+            @Param("size") Size size,
+            @Param("length") BigDecimal length,
+            @Param("width") BigDecimal width,
+            @Param("quantity") Long quantity,
+            @Param("additionalPrice") BigDecimal additionalPrice);
 
     boolean existsByProductAndSize(Products product, Size size);
-    boolean existsByLengthAndWidth(BigDecimal length, BigDecimal width);
+
+    boolean existsByProductAndLengthAndWidthAndSize(Products product, BigDecimal length, BigDecimal width, Size size);
 }

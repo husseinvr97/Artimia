@@ -47,6 +47,11 @@ public class OrdersController {
         return new ResponseEntity<>(orderService.getOrderById(orderId), HttpStatus.FOUND);
     }
 
+    @GetMapping
+    public ResponseEntity<List<GetDTO>> getAllOrders() {
+        return new ResponseEntity<>(orderService.getAll(), HttpStatus.FOUND);
+    }
+
     @PostMapping("/search")
     public ResponseEntity<List<GetDTO>> searchOrders(@RequestBody SearchDTO searchDto) {
         return new ResponseEntity<>(orderService.searchOrders(searchDto), HttpStatus.FOUND);
@@ -63,7 +68,7 @@ public class OrdersController {
         return new ResponseEntity<>(orderService.updateOrder(orderId, dto), HttpStatus.OK);
     }
 
-    @GetMapping("userId")
+    @GetMapping("/user/{userId}")
     public ResponseEntity<List<GetDTO>> getMethodName(@PathVariable Long userId) {
         return new ResponseEntity<>(orderService.getAllByUserId(userId), HttpStatus.OK);
     }

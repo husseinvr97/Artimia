@@ -153,6 +153,14 @@ public class OrderService {
                                 .stream().map(OrderMapper::toDto).toList();
         }
 
+        @Transactional
+        public List<GetDTO> getAll() {
+                List<GetDTO> toBeReturned = ordersRepository.findAll().stream().map(OrderMapper::toDto).toList();
+                if (toBeReturned.isEmpty())
+                        throw new ResourceNotFoundException("No orders Yet");
+                return toBeReturned;
+        }
+
         private void validateStatusTransition(OrderStatus current, OrderStatus newStatus) {
                 if (current == OrderStatus.CANCELLED && newStatus != OrderStatus.CANCELLED) {
                         throw new InvalidStatusTransitionException("Cannot modify cancelled orders");
