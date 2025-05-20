@@ -88,9 +88,8 @@ public class ProductController {
     }
 
     @GetMapping("/image/{imageName}")
-    public ResponseEntity<Resource> getImageFile(@PathVariable String imageName) throws IOException {
-        Path uploadsDir = Paths.get("D:/projects/Artimia/uploads").toAbsolutePath().normalize();
-        Path imagePath = uploadsDir.resolve(imageName).normalize();
+    public ResponseEntity<Resource> getImageFile(@PathVariable String imageName) throws IOException {Path uploadsDir = Paths.get(System.getProperty("user.home"), "Artimia", "uploads").toAbsolutePath().normalize();
+    Path imagePath = uploadsDir.resolve(imageName).normalize();
 
         if (!Files.exists(imagePath) || !imagePath.startsWith(uploadsDir)) {
             throw new ResourceNotFoundException("Image not found or access denied: " + imageName);
